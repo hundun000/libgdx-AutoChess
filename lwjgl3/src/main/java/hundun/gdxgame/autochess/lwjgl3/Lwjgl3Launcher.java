@@ -2,6 +2,7 @@ package hundun.gdxgame.autochess.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.mygdx.game.gui.ChessGame;
 import hundun.gdxgame.autochess.AutoChessGame;
 
 /** Launches the desktop (LWJGL3) application. */
@@ -12,7 +13,7 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new AutoChessGame(), getDefaultConfiguration());
+        return new Lwjgl3Application(new ChessGame(), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

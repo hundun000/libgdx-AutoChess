@@ -16,8 +16,12 @@ dependencies {
   api "com.github.crykn.guacamole:gdx:$guacamoleVersion"
   api "com.github.tommyettinger:formic:$formicVersion"
 
+  implementation "com.google.guava:guava-gwt:$guavaVersion"
+
   annotationProcessor "org.projectlombok:lombok:$lombokVersion"
   compileOnly "org.projectlombok:lombok:$lombokVersion"
+
+  testImplementation 'org.testng:testng:6.9.6'
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
