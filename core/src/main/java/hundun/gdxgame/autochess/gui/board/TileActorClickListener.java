@@ -48,12 +48,12 @@ public class TileActorClickListener extends ClickListener {
                             new PawnPromotionInterface().startLibGDXPromotion(gameScreen, (Move.PawnPromotion) move);
                         } else {
                             gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
-                            gameScreen.getMoveHistory().getMoveLog().addMove(move);
-                            gameScreen.getMoveHistory().updateMoveHistory();
+                            gameScreen.getMoveHistoryBoard().getMoveLog().addMove(move);
+                            gameScreen.getMoveHistoryBoard().updateMoveHistory();
                             if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
                                 gameScreen.getGameBoardTable().afterMove(move);
                             } else {
-                                gameScreen.getGameBoardTable().displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getStage());
+                                gameScreen.getGameBoardTable().displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
                             }
                         }
                     } else {

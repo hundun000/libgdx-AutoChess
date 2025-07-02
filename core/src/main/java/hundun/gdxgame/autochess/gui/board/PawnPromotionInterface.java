@@ -25,7 +25,7 @@ public final class PawnPromotionInterface {
         promoteDialog.text(text);
         promoteDialog.getContentTable().row();
         promoteDialog.getButtonTable().add(this.pawnPromotionButton(gameScreen, pawnPromotion.getPromotedPawn().getPromotionPieces(pawnPromotion.getDestinationCoordinate()), promoteDialog, pawnPromotion));
-        promoteDialog.show(gameScreen.getStage());
+        promoteDialog.show(gameScreen.getPopupUiStage());
     }
 
     private Board promoteLibGDXPawn(final Board board, final Move.PawnPromotion pawnPromotion) {
@@ -59,12 +59,12 @@ public final class PawnPromotionInterface {
                     promoteDialog.remove();
                     gameScreen.updateChessBoard(promoteLibGDXPawn(gameScreen.getChessBoard(), pawnPromotion));
                     gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
-                    gameScreen.getMoveHistory().getMoveLog().addMove(pawnPromotion);
-                    gameScreen.getMoveHistory().updateMoveHistory();
+                    gameScreen.getMoveHistoryBoard().getMoveLog().addMove(pawnPromotion);
+                    gameScreen.getMoveHistoryBoard().updateMoveHistory();
                     if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
                         gameScreen.getGameBoardTable().afterMove(pawnPromotion);
                     } else {
-                        gameScreen.getGameBoardTable().displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getStage());
+                        gameScreen.getGameBoardTable().displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
                     }
                 }
             });

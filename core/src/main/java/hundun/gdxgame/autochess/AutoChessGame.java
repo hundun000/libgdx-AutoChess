@@ -1,34 +1,80 @@
 package hundun.gdxgame.autochess;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+import hundun.gdxgame.autochess.engine.board.Board;
+import hundun.gdxgame.autochess.gui.GuiUtils;
+import hundun.gdxgame.autochess.gui.board.GameProps.GameEnd;
+import hundun.gdxgame.autochess.gui.gameScreen.About;
+import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
+import hundun.gdxgame.autochess.gui.gameScreen.WelcomeScreen;
+import hundun.gdxgame.libv3.corelib.base.BaseHundunGame;
+import hundun.gdxgame.libv3.gamelib.starter.listerner.ILogicFrameListener;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class AutoChessGame extends ApplicationAdapter {
-    private SpriteBatch batch;
-    private Texture image;
+public final class AutoChessGame extends BaseHundunGame<Void> {
 
-    @Override
-    public void create() {
-        batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
+    private GameScreen gameScreen;
+    private WelcomeScreen welcomeScreen;
+    private About aboutScreen;
+
+    private static final int LOGIC_FRAME_PER_SECOND = 1;
+    public static GameArg gameArg = GameArg.builder()
+        .viewportWidth(GuiUtils.WORLD_WIDTH)
+        .viewportHeight(GuiUtils.WORLD_HEIGHT)
+        .logicFramePerSecond(LOGIC_FRAME_PER_SECOND)
+        .mainSkinFilePath("UISKIN2/uiskin2.json")
+        .build();
+
+    public AutoChessGame(GameArg gameArg) {
+        super(gameArg);
     }
 
     @Override
-    public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        batch.draw(image, 140, 210);
-        batch.end();
+    protected void createBody() {
+        this.gameScreen = new GameScreen(this);
+        this.aboutScreen = new About(this);
+        this.welcomeScreen = new WelcomeScreen(this);
+    }
+
+    @Override
+    protected void createFinally() {
+        screenManager.pushScreen(welcomeScreen, null);
+    }
+
+
+    public GameScreen getGameScreen() {
+        return this.gameScreen;
+    }
+
+    public WelcomeScreen getWelcomeScreen() {
+        return this.welcomeScreen;
+    }
+
+    public About getAboutScreen() {
+        return this.aboutScreen;
+    }
+
+    public void gotoGameScreen(final GameScreen.BOARD_STATE board_state, final Board board) {
+        this.gameScreen.updateChessBoard(board);
+        if (board_state == GameScreen.BOARD_STATE.NEW_GAME) {
+            this.gameScreen.getMoveHistoryBoard().getMoveLog().clear();
+        }
+        this.gameScreen.getGameBoardTable().updateAiMove(null);
+        this.gameScreen.getGameBoardTable().updateHumanMove(null);
+        this.gameScreen.getMoveHistoryBoard().updateMoveHistory();
+        this.gameScreen.getGameBoardTable().drawBoard(this.gameScreen, gameScreen.getChessBoard(), this.gameScreen.getDisplayOnlyBoard());
+        this.gameScreen.getGameBoardTable().updateGameEnd(GameEnd.ONGOING);
+
+        screenManager.pushScreen(this.gameScreen, null);
     }
 
     @Override
     public void dispose() {
-        batch.dispose();
-        image.dispose();
+        this.gameScreen.dispose();
+        this.welcomeScreen.dispose();
+        this.aboutScreen.dispose();
+    }
+
+    @Override
+    protected void onLogicFrame(ILogicFrameListener iLogicFrameListener) {
+        iLogicFrameListener.onLogicFrame();
     }
 }

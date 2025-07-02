@@ -4,6 +4,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import hundun.gdxgame.autochess.AutoChessGame;
+import hundun.gdxgame.libv3.corelib.base.BaseHundunGame;
+import hundun.gdxgame.libv3.corelib.base.BaseHundunGame.GameArg;
 
 /** Launches the GWT application. */
 public class GwtLauncher extends GwtApplication {
@@ -21,6 +23,6 @@ public class GwtLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-            return new AutoChessGame();
+            return new AutoChessGame(AutoChessGame.gameArg);
         }
 }

@@ -61,7 +61,7 @@ public final class ArtificialIntelligence {
         table.add(textButton);
 
         dialog.add(table);
-        dialog.show(gameScreen.getStage());
+        dialog.show(gameScreen.getPopupUiStage());
 
         return dialog;
     }
@@ -84,8 +84,8 @@ public final class ArtificialIntelligence {
             if (!this.miniMax.getTerminateProcess()) {
                 Gdx.app.postRunnable(() -> {
                     if (!bestMove.equals(Move.MoveFactory.getNullMove())) {
-                        gameScreen.getMoveHistory().getMoveLog().addMove(bestMove);
-                        gameScreen.getMoveHistory().updateMoveHistory();
+                        gameScreen.getMoveHistoryBoard().getMoveLog().addMove(bestMove);
+                        gameScreen.getMoveHistoryBoard().updateMoveHistory();
                         gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
                         gameScreen.getGameBoardTable().afterMove(bestMove);
                     } else {

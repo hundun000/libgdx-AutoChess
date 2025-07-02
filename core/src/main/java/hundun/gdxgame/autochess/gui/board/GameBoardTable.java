@@ -143,7 +143,7 @@ public final class GameBoardTable extends Table {
             autoWaitingPieces.removeIf(it -> !gameScreen.getChessBoard().getAllPieces().contains(it) || it == move.getMovedPiece());
             Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieceIds size = " + autoWaitingPieces.size());
         }
-        displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getStage());
+        displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
     }
 
     public boolean getArtificialIntelligenceWorking() {

@@ -1,19 +1,15 @@
 package hundun.gdxgame.autochess.gui.gameScreen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import hundun.gdxgame.autochess.engine.FEN.FenUtilities;
 import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.BoardUtils;
-import hundun.gdxgame.autochess.gui.ChessGame;
+import hundun.gdxgame.autochess.AutoChessGame;
 import hundun.gdxgame.autochess.gui.GuiUtils;
 import hundun.gdxgame.autochess.gui.board.DisplayOnlyBoard;
 import hundun.gdxgame.autochess.gui.board.GameBoardTable;
@@ -23,15 +19,19 @@ import hundun.gdxgame.autochess.gui.gameMenu.GameOption;
 import hundun.gdxgame.autochess.gui.gameMenu.GamePreference;
 import hundun.gdxgame.autochess.gui.moveHistory.MoveHistoryBoard;
 import hundun.gdxgame.autochess.gui.timer.AutoBattlePanel;
+import lombok.Getter;
 
-public final class GameScreen implements Screen {
+public final class GameScreen extends BaseAutoChessScreen {
 
-    private final Stage stage;
+    @Getter
     private Board chessBoard;
-
+    @Getter
     private final GameBoardTable gameBoardTable;
+    @Getter
     private final DisplayOnlyBoard displayOnlyBoard;
+    @Getter
     private final MoveHistoryBoard moveHistoryBoard;
+    @Getter
     private final AutoBattlePanel gameAutoBattlePanel;
 
     private final GameMenu gameMenu;
@@ -46,7 +46,7 @@ public final class GameScreen implements Screen {
         }, LOAD_GAME {
             @Override
             public Board getBoard(final GameScreen gameScreen) {
-                return FenUtilities.createGameFromSavedData(GuiUtils.MOVE_LOG_PREF.getString(GuiUtils.MOVE_LOG_STATE), gameScreen.getMoveHistory().getMoveLog());
+                return FenUtilities.createGameFromSavedData(GuiUtils.MOVE_LOG_PREF.getString(GuiUtils.MOVE_LOG_STATE), gameScreen.getMoveHistoryBoard().getMoveLog());
             }
         };
 
@@ -58,34 +58,10 @@ public final class GameScreen implements Screen {
         this.chessBoard = board;
     }
 
-    //getter
-    public Board getChessBoard() {
-        return this.chessBoard;
-    }
 
-    public GameBoardTable getGameBoardTable() {
-        return this.gameBoardTable;
-    }
-
-    public DisplayOnlyBoard getDisplayOnlyBoard() {
-        return this.displayOnlyBoard;
-    }
-
-    public MoveHistoryBoard getMoveHistory() {
-        return this.moveHistoryBoard;
-    }
-
-    public AutoBattlePanel getGameTimerPanel() {
-        return this.gameAutoBattlePanel;
-    }
-
-    public Stage getStage() {
-        return this.stage;
-    }
-
-    public GameScreen(final ChessGame chessGame) {
+    public GameScreen(final AutoChessGame chessGame) {
+        super(chessGame);
         //init
-        this.stage = new Stage(new FitViewport(GuiUtils.WORLD_WIDTH, GuiUtils.WORLD_HEIGHT), new SpriteBatch());
         this.chessBoard = Board.createStandardBoard(BoardUtils.DEFAULT_TIMER_MINUTE, BoardUtils.DEFAULT_TIMER_SECOND, BoardUtils.DEFAULT_TIMER_MILLISECOND);
         this.moveHistoryBoard = new MoveHistoryBoard();
         this.gameBoardTable = new GameBoardTable(this);
@@ -96,6 +72,13 @@ public final class GameScreen implements Screen {
         this.gamePreference = new GamePreference(this);
 
         Gdx.graphics.setTitle("LibGDX Simple Parallel Chess 2.0");
+
+
+    }
+
+    @Override
+    protected void lazyInitUiRootContext() {
+        super.lazyInitUiRootContext();
 
         final VerticalGroup verticalGroup = new VerticalGroup();
 
@@ -109,7 +92,8 @@ public final class GameScreen implements Screen {
         verticalGroup.addActor(this.initGameMenu());
         verticalGroup.addActor(horizontalGroup);
 
-        this.stage.addActor(verticalGroup);
+        this.uiRootTable.addActor(verticalGroup);
+
     }
 
     private Stack initGameBoard() {
@@ -129,54 +113,29 @@ public final class GameScreen implements Screen {
         return table;
     }
 
+
+
     @Override
-    public void resize(final int width, final int height) {
-        this.stage.getViewport().update(width, height, true);
+    public void render(float delta) {
+
+
+
+        super.render(delta);
     }
 
-    float nextAutoPieceDelayConfig = 1;
-    float nextAutoPieceDelayCount;
     @Override
-    public void render(final float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        this.stage.act(delta);
+    public void onLogicFrame() {
         this.gameMenu.detectKeyPressed(this);
         this.gamePreference.detectUndoMoveKeyPressed(this);
         if (this.getGameBoardTable().getArtificialIntelligenceWorking()) {
             this.getGameBoardTable().getArtificialIntelligence().getProgressBar().setValue(this.getGameBoardTable().getArtificialIntelligence().getMoveCount());
         } else if (!gameBoardTable.autoWaitingPieces.isEmpty()) {
-            nextAutoPieceDelayCount += delta;
-            if (nextAutoPieceDelayCount > nextAutoPieceDelayConfig) {
-                nextAutoPieceDelayCount = 0;
-                gameBoardTable.nextAutoPiece();
-            }
+            gameBoardTable.nextAutoPiece();
         }
-        this.stage.getBatch().begin();
-        this.stage.getBatch().draw(GuiUtils.BACKGROUND, 0, 0);
-        this.stage.getBatch().end();
-        this.stage.draw();
     }
 
-    @Override
-    public void dispose() {
-        this.stage.dispose();
-        this.stage.getBatch().dispose();
-        GuiUtils.dispose();
-    }
 
-    @Deprecated
-    public void show() {
-    }
-
-    @Deprecated
-    public void pause() {
-    }
-
-    @Deprecated
-    public void resume() {
-    }
-
-    @Deprecated
-    public void hide() {
+    public Stage getPopupUiStage() {
+        return popupUiStage;
     }
 }

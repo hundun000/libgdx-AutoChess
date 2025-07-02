@@ -21,7 +21,7 @@ public final class GameOption extends TextButton {
         this.addListener(new ClickListener() {
             @Override
             public void clicked(final InputEvent event, final float x, final float y) {
-                gameMenuDialog.show(gameScreen.getStage());
+                gameMenuDialog.show(gameScreen.getPopupUiStage());
             }
         });
     }

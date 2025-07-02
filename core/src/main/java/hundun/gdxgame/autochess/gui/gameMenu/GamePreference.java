@@ -23,7 +23,7 @@ public final class GamePreference extends TextButton {
             @Override
             public void clicked(final InputEvent event, final float x, final float y) {
 
-                gamePreferenceDialog.show(gameScreen.getStage());
+                gamePreferenceDialog.show(gameScreen.getPopupUiStage());
             }
         });
     }
@@ -70,8 +70,8 @@ public final class GamePreference extends TextButton {
                             try {
                                 gameScreen.updateChessBoard(FenUtilities.createGameFromFEN(fenTextFiled.getText()));
                                 gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
-                                gameScreen.getMoveHistory().getMoveLog().clear();
-                                gameScreen.getMoveHistory().updateMoveHistory();
+                                gameScreen.getMoveHistoryBoard().getMoveLog().clear();
+                                gameScreen.getMoveHistoryBoard().updateMoveHistory();
                             } catch (final RuntimeException ignored) {
                                 final Label label = new Label("Invalid FEN File Format.\nPlease try again", GuiUtils.UI_SKIN);
                                 label.setColor(Color.BLACK);
@@ -79,12 +79,12 @@ public final class GamePreference extends TextButton {
                                     @Override
                                     protected void result(final Object object) {
                                     }
-                                }.button("Ok").text(label).show(gameScreen.getStage());
+                                }.button("Ok").text(label).show(gameScreen.getPopupUiStage());
                             }
                         }
                     };
                     dialog.add(fenTextFiled).width(800);
-                    dialog.button("Ok").show(gameScreen.getStage());
+                    dialog.button("Ok").show(gameScreen.getPopupUiStage());
                 }
             });
         }
@@ -105,7 +105,7 @@ public final class GamePreference extends TextButton {
                         protected void result(final Object object) {
                             this.remove();
                         }
-                    }.button("Ok").text(fenLabel).show(gameScreen.getStage());
+                    }.button("Ok").text(fenLabel).show(gameScreen.getPopupUiStage());
                 }
             });
         }
@@ -120,7 +120,7 @@ public final class GamePreference extends TextButton {
                 @Override
                 public void clicked(final InputEvent event, final float x, final float y) {
                     gamePreferenceDialog.remove();
-                    if (gameScreen.getMoveHistory().getMoveLog().size() > 0 && !gameScreen.getGameBoardTable().isGameEnd()) {
+                    if (gameScreen.getMoveHistoryBoard().getMoveLog().size() > 0 && !gameScreen.getGameBoardTable().isGameEnd()) {
                         undoPlayerMove(gameScreen);
                     }
                 }
@@ -132,7 +132,7 @@ public final class GamePreference extends TextButton {
                     || (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Input.Keys.Z))
                     || (Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT) && Gdx.input.isKeyJustPressed(Input.Keys.Z))
                     || (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_RIGHT) && Gdx.input.isKeyPressed(Input.Keys.Z))) {
-                if (gameScreen.getMoveHistory().getMoveLog().size() > 0 && !gameScreen.getGameBoardTable().isGameEnd()) {
+                if (gameScreen.getMoveHistoryBoard().getMoveLog().size() > 0 && !gameScreen.getGameBoardTable().isGameEnd()) {
                     this.undoPlayerMove(gameScreen);
                 }
             }
@@ -148,7 +148,7 @@ public final class GamePreference extends TextButton {
                 this.undoMove(gameScreen);
             } else if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
                     && gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
-                gameScreen.getMoveHistory().getMoveLog().removeMove();
+                gameScreen.getMoveHistoryBoard().getMoveLog().removeMove();
                 this.undoMove(gameScreen);
             } else if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
                     && !gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
@@ -157,12 +157,12 @@ public final class GamePreference extends TextButton {
         }
 
         private void undoMove(final GameScreen gameScreen) {
-            final Move lastMove = gameScreen.getMoveHistory().getMoveLog().removeMove();
+            final Move lastMove = gameScreen.getMoveHistoryBoard().getMoveLog().removeMove();
             gameScreen.updateChessBoard(gameScreen.getChessBoard().getCurrentPlayer().undoMove(lastMove).getPreviousBoard());
             gameScreen.getGameBoardTable().updateHumanMove(null);
             gameScreen.getGameBoardTable().updateAiMove(null);
             gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
-            gameScreen.getMoveHistory().updateMoveHistory();
+            gameScreen.getMoveHistoryBoard().updateMoveHistory();
         }
     }
 
@@ -180,7 +180,7 @@ public final class GamePreference extends TextButton {
                 public void clicked(final InputEvent event, final float x, final float y) {
                     gamePreferenceDialog.remove();
 
-                    dialog.show(gameScreen.getStage());
+                    dialog.show(gameScreen.getPopupUiStage());
                 }
             });
         }
@@ -216,8 +216,8 @@ public final class GamePreference extends TextButton {
                     gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
 
 
-                    gameScreen.getMoveHistory().changeMoveHistoryDirection();
-                    gameScreen.getMoveHistory().updateMoveHistory();
+                    gameScreen.getMoveHistoryBoard().changeMoveHistoryDirection();
+                    gameScreen.getMoveHistoryBoard().updateMoveHistory();
 
                 }
             });

@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import hundun.gdxgame.autochess.engine.FEN.FenUtilities;
 import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.BoardUtils;
-import hundun.gdxgame.autochess.gui.ChessGame;
+import hundun.gdxgame.autochess.AutoChessGame;
 import hundun.gdxgame.autochess.gui.GuiUtils;
 import hundun.gdxgame.autochess.gui.board.GameProps;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
@@ -27,13 +27,13 @@ public final class GameMenu extends TextButton {
 
     private final GameMenuDialog gameMenuDialog;
 
-    public GameMenu(final ChessGame chessGame, final GameScreen gameScreen) {
+    public GameMenu(final AutoChessGame chessGame, final GameScreen gameScreen) {
         super("Game Menu", GuiUtils.UI_SKIN);
         this.gameMenuDialog = new GameMenuDialog(chessGame, gameScreen);
         this.addListener(new ClickListener() {
             @Override
             public void clicked(final InputEvent event, final float x, final float y) {
-                gameMenuDialog.show(gameScreen.getStage());
+                gameMenuDialog.show(gameScreen.getPopupUiStage());
             }
         });
     }
@@ -46,7 +46,7 @@ public final class GameMenu extends TextButton {
 
         private final List<GameButtonAbstract> gameButtonAbstractList;
 
-        private GameMenuDialog(final ChessGame chessGame, final GameScreen gameScreen) {
+        private GameMenuDialog(final AutoChessGame chessGame, final GameScreen gameScreen) {
             super("Game Menu", GuiUtils.UI_SKIN);
 
             this.gameButtonAbstractList = Arrays.asList(
@@ -79,7 +79,7 @@ public final class GameMenu extends TextButton {
 
         private final Dialog dialog;
 
-        private GameButtonAbstract(final ChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog, final String text) {
+        private GameButtonAbstract(final AutoChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog, final String text) {
             super(text, GuiUtils.UI_SKIN);
             this.dialog = this.generateDialog(chessGame, gameScreen);
         }
@@ -92,19 +92,19 @@ public final class GameMenu extends TextButton {
             return leftKeyPressed || rightKeyPressed;
         }
 
-        protected abstract Dialog generateDialog(final ChessGame chessGame, final GameScreen gameScreen);
+        protected abstract Dialog generateDialog(final AutoChessGame chessGame, final GameScreen gameScreen);
     }
 
     private static final class NewGameButton extends GameButtonAbstract {
 
-        private NewGameButton(final ChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog) {
+        private NewGameButton(final AutoChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog) {
             super(chessGame, gameScreen, gameMenuDialog, GuiUtils.IS_SMARTPHONE ? "New Game" : "New Game (CTRL + N)");
             this.addListener(new ClickListener() {
                 @Override
                 public void clicked(final InputEvent event, final float x, final float y) {
                     gameMenuDialog.remove();
 
-                    NewGameButton.super.dialog.show(gameScreen.getStage());
+                    NewGameButton.super.dialog.show(gameScreen.getPopupUiStage());
                 }
             });
         }
@@ -117,7 +117,7 @@ public final class GameMenu extends TextButton {
         }
 
         @Override
-        protected Dialog generateDialog(final ChessGame chessGame, final GameScreen gameScreen) {
+        protected Dialog generateDialog(final AutoChessGame chessGame, final GameScreen gameScreen) {
             return this.generateDialog(gameScreen);
         }
 
@@ -131,9 +131,9 @@ public final class GameMenu extends TextButton {
                     if (object == null) {
                         return;
                     }
-                    setupTimer.show(gameScreen.getStage());
+                    setupTimer.show(gameScreen.getPopupUiStage());
                     if ((Boolean) object) {
-                        GuiUtils.MOVE_LOG_PREF.putString(GuiUtils.MOVE_LOG_STATE, FenUtilities.getGameData(gameScreen.getMoveHistory().getMoveLog(), gameScreen.getChessBoard()));
+                        GuiUtils.MOVE_LOG_PREF.putString(GuiUtils.MOVE_LOG_STATE, FenUtilities.getGameData(gameScreen.getMoveHistoryBoard().getMoveLog(), gameScreen.getChessBoard()));
                         GuiUtils.MOVE_LOG_PREF.flush();
                     }
                 }
@@ -258,27 +258,27 @@ public final class GameMenu extends TextButton {
 
             private void restartGame(final GameScreen gameScreen, final int minute) {
                 gameScreen.updateChessBoard(Board.createStandardBoard(minute, BoardUtils.DEFAULT_TIMER_SECOND, BoardUtils.DEFAULT_TIMER_MILLISECOND));
-                gameScreen.getMoveHistory().getMoveLog().clear();
+                gameScreen.getMoveHistoryBoard().getMoveLog().clear();
                 gameScreen.getGameBoardTable().updateHumanPiece(null);
                 gameScreen.getGameBoardTable().updateAiMove(null);
                 gameScreen.getGameBoardTable().updateHumanMove(null);
                 gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
                 gameScreen.getGameBoardTable().updateGameEnd(GameProps.GameEnd.ONGOING);
-                gameScreen.getMoveHistory().updateMoveHistory();
+                gameScreen.getMoveHistoryBoard().updateMoveHistory();
             }
         }
     }
 
     private static final class ExitGameButton extends GameButtonAbstract {
 
-        private ExitGameButton(final ChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog) {
+        private ExitGameButton(final AutoChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog) {
             super(chessGame, gameScreen, gameMenuDialog, GuiUtils.IS_SMARTPHONE ? "Exit Game" : "Exit Game (CTRL + X)");
             this.addListener(new ClickListener() {
                 @Override
                 public void clicked(final InputEvent event, final float x, final float y) {
                     gameMenuDialog.remove();
 
-                    ExitGameButton.super.dialog.show(gameScreen.getStage());
+                    ExitGameButton.super.dialog.show(gameScreen.getPopupUiStage());
                 }
             });
         }
@@ -291,7 +291,7 @@ public final class GameMenu extends TextButton {
         }
 
         @Override
-        public Dialog generateDialog(final ChessGame chessGame, final GameScreen gameScreen) {
+        public Dialog generateDialog(final AutoChessGame chessGame, final GameScreen gameScreen) {
             final Label label = new Label("Request confirmation to exit game and save current one", GuiUtils.UI_SKIN);
             label.setColor(Color.BLACK);
             return new Dialog("Exit Game Confirmation", GuiUtils.UI_SKIN) {
@@ -301,12 +301,11 @@ public final class GameMenu extends TextButton {
                         return;
                     }
                     if ((Boolean) object) {
-                        GuiUtils.MOVE_LOG_PREF.putString(GuiUtils.MOVE_LOG_STATE, FenUtilities.getGameData(gameScreen.getMoveHistory().getMoveLog(), gameScreen.getChessBoard()));
+                        GuiUtils.MOVE_LOG_PREF.putString(GuiUtils.MOVE_LOG_STATE, FenUtilities.getGameData(gameScreen.getMoveHistoryBoard().getMoveLog(), gameScreen.getChessBoard()));
                         GuiUtils.MOVE_LOG_PREF.flush();
                     }
                     this.remove();
-                    Gdx.input.setInputProcessor(chessGame.getWelcomeScreen().getStage());
-                    chessGame.setScreen(chessGame.getWelcomeScreen());
+                    chessGame.getScreenManager().pushScreen(chessGame.getWelcomeScreen(), null);
                 }
             }.button("Yes", true)
                     .button("No", false)
@@ -317,14 +316,14 @@ public final class GameMenu extends TextButton {
 
     private static final class SaveGameButton extends GameButtonAbstract {
 
-        private SaveGameButton(final ChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog) {
+        private SaveGameButton(final AutoChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog) {
             super(chessGame, gameScreen, gameMenuDialog, GuiUtils.IS_SMARTPHONE ? "Save Game" : "Save Game (CTRL + S)");
             this.addListener(new ClickListener() {
                 @Override
                 public void clicked(final InputEvent event, final float x, final float y) {
                     gameMenuDialog.remove();
 
-                    SaveGameButton.super.dialog.show(gameScreen.getStage());
+                    SaveGameButton.super.dialog.show(gameScreen.getPopupUiStage());
                 }
             });
         }
@@ -337,7 +336,7 @@ public final class GameMenu extends TextButton {
         }
 
         @Override
-        protected Dialog generateDialog(final ChessGame chessGame, final GameScreen gameScreen) {
+        protected Dialog generateDialog(final AutoChessGame chessGame, final GameScreen gameScreen) {
             return this.generateDialog(gameScreen);
         }
 
@@ -354,7 +353,7 @@ public final class GameMenu extends TextButton {
                     }
                     if ((Boolean) object) {
 
-                        GuiUtils.MOVE_LOG_PREF.putString(GuiUtils.MOVE_LOG_STATE, FenUtilities.getGameData(gameScreen.getMoveHistory().getMoveLog(), gameScreen.getChessBoard()));
+                        GuiUtils.MOVE_LOG_PREF.putString(GuiUtils.MOVE_LOG_STATE, FenUtilities.getGameData(gameScreen.getMoveHistoryBoard().getMoveLog(), gameScreen.getChessBoard()));
                         GuiUtils.MOVE_LOG_PREF.flush();
 
                         new Dialog("Saved Game Message", GuiUtils.UI_SKIN) {
@@ -362,7 +361,7 @@ public final class GameMenu extends TextButton {
                             protected void result(final Object object) {
                                 this.remove();
                             }
-                        }.text(gameSavedLabel).button("Ok").show(gameScreen.getStage());
+                        }.text(gameSavedLabel).button("Ok").show(gameScreen.getPopupUiStage());
                     }
                 }
             }.button("Yes", true)
@@ -373,7 +372,7 @@ public final class GameMenu extends TextButton {
 
     private static final class LoadGameButton extends GameButtonAbstract {
 
-        private LoadGameButton(final ChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog) {
+        private LoadGameButton(final AutoChessGame chessGame, final GameScreen gameScreen, final GameMenuDialog gameMenuDialog) {
             super(chessGame, gameScreen, gameMenuDialog, GuiUtils.IS_SMARTPHONE ? "Load Game" : "Load Game (CTRL + L)");
             this.addListener(new ClickListener() {
                 @Override
@@ -381,7 +380,7 @@ public final class GameMenu extends TextButton {
                     gameMenuDialog.remove();
 
                     gameScreen.getGameBoardTable().getArtificialIntelligence().setStopAI(true);
-                    LoadGameButton.super.dialog.show(gameScreen.getStage());
+                    LoadGameButton.super.dialog.show(gameScreen.getPopupUiStage());
                 }
             });
         }
@@ -393,7 +392,7 @@ public final class GameMenu extends TextButton {
         }
 
         @Override
-        protected Dialog generateDialog(final ChessGame chessGame, final GameScreen gameScreen) {
+        protected Dialog generateDialog(final AutoChessGame chessGame, final GameScreen gameScreen) {
             return this.generateDialog(gameScreen);
         }
 
@@ -409,13 +408,13 @@ public final class GameMenu extends TextButton {
                     try {
                         final String moveHistory = GuiUtils.MOVE_LOG_PREF.getString(GuiUtils.MOVE_LOG_STATE);
                         if ((Boolean) object) {
-                            GuiUtils.MOVE_LOG_PREF.putString(GuiUtils.MOVE_LOG_STATE, FenUtilities.getGameData(gameScreen.getMoveHistory().getMoveLog(), gameScreen.getChessBoard()));
+                            GuiUtils.MOVE_LOG_PREF.putString(GuiUtils.MOVE_LOG_STATE, FenUtilities.getGameData(gameScreen.getMoveHistoryBoard().getMoveLog(), gameScreen.getChessBoard()));
                             GuiUtils.MOVE_LOG_PREF.flush();
                         }
-                        gameScreen.updateChessBoard(FenUtilities.createGameFromSavedData(moveHistory, gameScreen.getMoveHistory().getMoveLog()));
+                        gameScreen.updateChessBoard(FenUtilities.createGameFromSavedData(moveHistory, gameScreen.getMoveHistoryBoard().getMoveLog()));
                         gameScreen.getGameBoardTable().updateAiMove(null);
                         gameScreen.getGameBoardTable().updateHumanMove(null);
-                        gameScreen.getMoveHistory().updateMoveHistory();
+                        gameScreen.getMoveHistoryBoard().updateMoveHistory();
                         gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
                         gameScreen.getGameBoardTable().updateGameEnd(GameProps.GameEnd.ONGOING);
                         final Label gameLoadedLabel = new Label("Game Loaded!", GuiUtils.UI_SKIN);
@@ -425,7 +424,7 @@ public final class GameMenu extends TextButton {
                             protected void result(final Object object) {
                                 this.remove();
                             }
-                        }.text(gameLoadedLabel).button("Ok").show(gameScreen.getStage());
+                        }.text(gameLoadedLabel).button("Ok").show(gameScreen.getPopupUiStage());
                     } catch (final RuntimeException e) {
                         e.printStackTrace();
                         final Label label = new Label("No game to load", GuiUtils.UI_SKIN);
@@ -434,7 +433,7 @@ public final class GameMenu extends TextButton {
                             @Override
                             protected void result(final Object object) {
                             }
-                        }.text(label).button("Ok").show(gameScreen.getStage());
+                        }.text(label).button("Ok").show(gameScreen.getPopupUiStage());
                     }
                 }
             }.button("Yes", true).button("No", false)

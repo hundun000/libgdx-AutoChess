@@ -21,7 +21,7 @@ public final class AIButton extends TextButton {
             @Override
             public void clicked(final InputEvent event, final float x, final float y) {
 
-                aiDialog.show(gameScreen.getStage());
+                aiDialog.show(gameScreen.getPopupUiStage());
             }
         });
     }
