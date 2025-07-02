@@ -16,7 +16,6 @@ dependencies {
   api "com.github.crykn.guacamole:gdx:$guacamoleVersion"
   api "com.github.tommyettinger:formic:$formicVersion"
 
-  implementation "com.google.guava:guava-gwt:$guavaVersion"
 
   annotationProcessor "org.projectlombok:lombok:$lombokVersion"
   compileOnly "org.projectlombok:lombok:$lombokVersion"

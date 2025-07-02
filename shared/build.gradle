@@ -7,7 +7,8 @@ dependencies {
   api "com.github.hundun000.libgdx-hundun-libV3:hundun-shared-core:$hundunLibVersion"
   api "com.github.hundun000.libgdx-hundun-libV3:hundun-shared-core:$hundunLibVersion:sources"
 
-  testImplementation platform('org.junit:junit-bom:5.10.0')
-  testImplementation 'org.junit.jupiter:junit-jupiter'
+  api "com.google.guava:guava-gwt:$guavaVersion"
+
+  testImplementation 'org.testng:testng:6.9.6'
 
 }
