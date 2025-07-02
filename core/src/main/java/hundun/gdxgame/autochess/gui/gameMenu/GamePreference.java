@@ -142,23 +142,23 @@ public final class GamePreference extends TextButton {
         //If player made move but AI is thinking, undo player move, terminate AI
         //Otherwise, both player is human, undo that player move only
         private void undoPlayerMove(final GameScreen gameScreen) {
-            if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer())
-                    && !gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer().getOpponent())) {
+            if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
+                    && !gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
                 gameScreen.getGameBoardTable().getArtificialIntelligence().setStopAI(true);
                 this.undoMove(gameScreen);
-            } else if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer())
-                    && gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer().getOpponent())) {
+            } else if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
+                    && gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
                 gameScreen.getMoveHistory().getMoveLog().removeMove();
                 this.undoMove(gameScreen);
-            } else if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer())
-                    && !gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer().getOpponent())) {
+            } else if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
+                    && !gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
                 this.undoMove(gameScreen);
             }
         }
 
         private void undoMove(final GameScreen gameScreen) {
             final Move lastMove = gameScreen.getMoveHistory().getMoveLog().removeMove();
-            gameScreen.updateChessBoard(gameScreen.getChessBoard().currentPlayer().undoMove(lastMove).getPreviousBoard());
+            gameScreen.updateChessBoard(gameScreen.getChessBoard().getCurrentPlayer().undoMove(lastMove).getPreviousBoard());
             gameScreen.getGameBoardTable().updateHumanMove(null);
             gameScreen.getGameBoardTable().updateAiMove(null);
             gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());

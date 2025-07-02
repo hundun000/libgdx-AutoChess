@@ -8,7 +8,9 @@ import hundun.gdxgame.autochess.engine.board.BoardUtils;
 import hundun.gdxgame.autochess.engine.board.Move;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.gui.GuiUtils;
+import lombok.Setter;
 
+@Setter
 public final class DisplayOnlyBoard extends Table {
 
     private GuiUtils.TILE_COLOR tileColor;
@@ -45,13 +47,9 @@ public final class DisplayOnlyBoard extends Table {
         return this.tileColor;
     }
 
-    public void setTileColor(final GuiUtils.TILE_COLOR tile_color) {
-        this.tileColor = tile_color;
-    }
-
     public void highlightLegalMove(final GameBoardTable gameBoardTable, final Board chessBoard) {
         final Piece piece = gameBoardTable.getHumanPiece();
-        final ImmutableList<Move> moveList = piece != null && piece.getLeague() == chessBoard.currentPlayer().getLeague() ? ImmutableList.copyOf(piece.calculateLegalMoves(chessBoard)) : ImmutableList.of();
+        final ImmutableList<Move> moveList = piece != null && piece.getLeague() == chessBoard.getCurrentPlayer().getLeague() ? ImmutableList.copyOf(piece.calculateLegalMoves(chessBoard)) : ImmutableList.of();
         for (final Move move : moveList) {
             final int tileID = gameBoardTable.boardDirection.flipped() ? 63 - move.getDestinationCoordinate() : move.getDestinationCoordinate();
             if (move.isAttack() || move.isPromotionMove() && ((Move.PawnPromotion) move).getDecoratedMove().isAttack()) {

@@ -51,11 +51,11 @@ public final class BoardUtils {
     }
 
     public static boolean kingThreat(final Move move) {
-        return move.getBoard().currentPlayer().makeMove(move).getLatestBoard().currentPlayer().isInCheck();
+        return move.getBoard().getCurrentPlayer().makeMove(move).getLatestBoard().getCurrentPlayer().isInCheck();
     }
 
     public static boolean isEndGameScenario(final Board board) {
-        return board.currentPlayer().isInCheckmate() || board.currentPlayer().isInStalemate();
+        return board.getCurrentPlayer().isInCheckmate() || board.getCurrentPlayer().isInStalemate();
     }
 
     private static ImmutableList<String> initializeAlgebraicNotation() {

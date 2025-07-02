@@ -60,7 +60,7 @@ public final class AIButton extends TextButton {
                         aiDialog.remove();
                         gameScreen.getGameBoardTable().updateWhitePlayerType(GameProps.PlayerType.getPlayerType(aiDialog.whitePlayerCheckBox.isChecked()));
                         gameScreen.getGameBoardTable().updateBlackPlayerType(GameProps.PlayerType.getPlayerType(aiDialog.blackPlayerCheckBox.isChecked()));
-                        if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer())) {
+                        if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
                             gameScreen.getGameBoardTable().getArtificialIntelligence().setStopAI(true);
                         }
                     }

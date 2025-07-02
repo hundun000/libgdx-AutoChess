@@ -1,5 +1,8 @@
 package hundun.gdxgame.autochess.engine.board;
 
+import lombok.Getter;
+
+@Getter
 public final class MoveTransition {
 
     private final Board latestBoard, previousBoard;
@@ -11,15 +14,4 @@ public final class MoveTransition {
         this.moveStatus = moveStatus;
     }
 
-    public MoveStatus getMoveStatus() {
-        return this.moveStatus;
-    }
-
-    public Board getPreviousBoard() {
-        return this.previousBoard;
-    }
-
-    public Board getLatestBoard() {
-        return this.latestBoard;
-    }
 }

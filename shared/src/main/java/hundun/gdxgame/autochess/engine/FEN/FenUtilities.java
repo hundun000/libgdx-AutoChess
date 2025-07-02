@@ -52,15 +52,15 @@ public final class FenUtilities {
         for (int i = 0; i < coordinates.length; i++) {
             final Move move = Move.MoveFactory.createMoveFromMoveHistory(board, Integer.parseInt(coordinates[i]), Integer.parseInt(coordinates[++i]));
             updatedMoveLog.addMove(move);
-            board = board.currentPlayer().makeMove(move).getLatestBoard();
+            board = board.getCurrentPlayer().makeMove(move).getLatestBoard();
         }
         moveLog.addAllMove(updatedMoveLog.getMoves());
         return board;
     }
 
     private static String getPlayerTimer(final Board board) {
-        final String whitePlayerTimer = board.whitePlayer().getMinute() + ":" + board.whitePlayer().getSecond() + ":" + board.whitePlayer().getMillisecond();
-        final String blackPlayerTimer = board.blackPlayer().getMinute() + ":" + board.blackPlayer().getSecond() + ":" + board.blackPlayer().getMillisecond();
+        final String whitePlayerTimer = board.getWhitePlayer().getMinute() + ":" + board.getWhitePlayer().getSecond() + ":" + board.getWhitePlayer().getMillisecond();
+        final String blackPlayerTimer = board.getBlackPlayer().getMinute() + ":" + board.getBlackPlayer().getSecond() + ":" + board.getBlackPlayer().getMillisecond();
         return "\n" + whitePlayerTimer + "\n" + blackPlayerTimer;
     }
 
@@ -217,23 +217,23 @@ public final class FenUtilities {
     }
 
     private static String calculateCurrentPlayerText(final Board board) {
-        return board.currentPlayer().toString().substring(0, 1).toLowerCase();
+        return board.getCurrentPlayer().toString().substring(0, 1).toLowerCase();
     }
 
     private static String calculateCastleText(final Board board) {
         final StringBuilder builder = new StringBuilder();
 
-        if (board.whitePlayer().isKingSideCastleCapable()) {
+        if (board.getWhitePlayer().isKingSideCastleCapable()) {
             builder.append("K");
         }
-        if (board.whitePlayer().isQueenSideCastleCapable()) {
+        if (board.getWhitePlayer().isQueenSideCastleCapable()) {
             builder.append("Q");
         }
 
-        if (board.blackPlayer().isKingSideCastleCapable()) {
+        if (board.getBlackPlayer().isKingSideCastleCapable()) {
             builder.append("k");
         }
-        if (board.blackPlayer().isQueenSideCastleCapable()) {
+        if (board.getBlackPlayer().isQueenSideCastleCapable()) {
             builder.append("q");
         }
 

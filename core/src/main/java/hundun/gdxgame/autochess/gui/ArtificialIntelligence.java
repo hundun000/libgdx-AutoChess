@@ -45,7 +45,7 @@ public final class ArtificialIntelligence {
 
     private Dialog showProgressBar(final GameScreen gameScreen) {
         final Table table = new Table();
-        this.progressBar.setRange(0, gameScreen.getChessBoard().currentPlayer().getLegalMoves().size());
+        this.progressBar.setRange(0, gameScreen.getChessBoard().getCurrentPlayer().getLegalMoves().size());
         table.add(this.progressBar).width(400).padBottom(20).row();
 
         final Dialog dialog = new Dialog("Give me some time to think...", GuiUtils.UI_SKIN);
@@ -78,7 +78,7 @@ public final class ArtificialIntelligence {
             gameScreen.getGameBoardTable().updateAiMove(bestMove);
             gameScreen.getGameBoardTable().updateHumanMove(null);
             if (!bestMove.equals(Move.MoveFactory.getNullMove())) {
-                gameScreen.updateChessBoard(gameScreen.getChessBoard().currentPlayer().makeMove(bestMove).getLatestBoard());
+                gameScreen.updateChessBoard(gameScreen.getChessBoard().getCurrentPlayer().makeMove(bestMove).getLatestBoard());
             }
             this.progressBar.setValue(this.miniMax.getMoveCount());
             if (!this.miniMax.getTerminateProcess()) {

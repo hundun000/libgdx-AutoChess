@@ -21,10 +21,10 @@ public final class PlayerTest {
     @Test
     public void testSimpleEvaluation() {
         final Board board = Board.createStandardBoardWithDefaultTimer();
-        final MoveTransition t1 = board.currentPlayer().makeMove(MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "e2"), BoardUtils.getCoordinateAtPosition("e4")));
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "e2"), BoardUtils.getCoordinateAtPosition("e4")));
         assertTrue(t1.getMoveStatus().isDone());
 
-        final MoveTransition t2 = t1.getLatestBoard().currentPlayer().makeMove(MoveFactory.createMove(t1.getLatestBoard(), BoardUtils.getPieceAtPosition(t1.getLatestBoard(), "e7"), BoardUtils.getCoordinateAtPosition("e5")));
+        final MoveTransition t2 = t1.getLatestBoard().getCurrentPlayer().makeMove(MoveFactory.createMove(t1.getLatestBoard(), BoardUtils.getPieceAtPosition(t1.getLatestBoard(), "e7"), BoardUtils.getCoordinateAtPosition("e5")));
         assertTrue(t2.getMoveStatus().isDone());
 
         assertEquals(this.standardBoardEvaluation.evaluate(t2.getLatestBoard(), 0), 0);
@@ -33,16 +33,16 @@ public final class PlayerTest {
     @Test
     public void testBug() {
         final Board board = Board.createStandardBoardWithDefaultTimer();
-        final MoveTransition t1 = board.currentPlayer().makeMove(MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "c2"), BoardUtils.getCoordinateAtPosition("c3")));
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "c2"), BoardUtils.getCoordinateAtPosition("c3")));
         assertTrue(t1.getMoveStatus().isDone());
 
-        final MoveTransition t2 = t1.getLatestBoard().currentPlayer().makeMove(MoveFactory.createMove(t1.getLatestBoard(), BoardUtils.getPieceAtPosition(t1.getLatestBoard(), "b8"), BoardUtils.getCoordinateAtPosition("a6")));
+        final MoveTransition t2 = t1.getLatestBoard().getCurrentPlayer().makeMove(MoveFactory.createMove(t1.getLatestBoard(), BoardUtils.getPieceAtPosition(t1.getLatestBoard(), "b8"), BoardUtils.getCoordinateAtPosition("a6")));
         assertTrue(t2.getMoveStatus().isDone());
 
-        final MoveTransition t3 = t2.getLatestBoard().currentPlayer().makeMove(MoveFactory.createMove(t2.getLatestBoard(), BoardUtils.getPieceAtPosition(t2.getLatestBoard(), "d1"), BoardUtils.getCoordinateAtPosition("a4")));
+        final MoveTransition t3 = t2.getLatestBoard().getCurrentPlayer().makeMove(MoveFactory.createMove(t2.getLatestBoard(), BoardUtils.getPieceAtPosition(t2.getLatestBoard(), "d1"), BoardUtils.getCoordinateAtPosition("a4")));
         assertTrue(t3.getMoveStatus().isDone());
 
-        final MoveTransition t4 = t3.getLatestBoard().currentPlayer().makeMove(MoveFactory.createMove(t3.getLatestBoard(), BoardUtils.getPieceAtPosition(t3.getLatestBoard(), "d7"), BoardUtils.getCoordinateAtPosition("d6")));
+        final MoveTransition t4 = t3.getLatestBoard().getCurrentPlayer().makeMove(MoveFactory.createMove(t3.getLatestBoard(), BoardUtils.getPieceAtPosition(t3.getLatestBoard(), "d7"), BoardUtils.getCoordinateAtPosition("d6")));
         assertFalse(t4.getMoveStatus().isDone());
     }
 
@@ -57,14 +57,14 @@ public final class PlayerTest {
         builder.setPiece(new Rook(League.WHITE, 52));
         builder.setPiece(new King(League.WHITE, 58, false, false));
         final Board board = builder.build();
-        final MoveTransition t1 = board.currentPlayer().makeMove(MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "e3"), BoardUtils.getCoordinateAtPosition("b6")));
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "e3"), BoardUtils.getCoordinateAtPosition("b6")));
         assertTrue(t1.getMoveStatus().isDone());
-        assertTrue(t1.getLatestBoard().currentPlayer().isInCheck());
+        assertTrue(t1.getLatestBoard().getCurrentPlayer().isInCheck());
 
-        final MoveTransition t2 = t1.getLatestBoard().currentPlayer().makeMove(MoveFactory.createMove(t1.getLatestBoard(), BoardUtils.getPieceAtPosition(t1.getLatestBoard(), "a5"), BoardUtils.getCoordinateAtPosition("b5")));
+        final MoveTransition t2 = t1.getLatestBoard().getCurrentPlayer().makeMove(MoveFactory.createMove(t1.getLatestBoard(), BoardUtils.getPieceAtPosition(t1.getLatestBoard(), "a5"), BoardUtils.getCoordinateAtPosition("b5")));
         assertFalse(t2.getMoveStatus().isDone());
 
-        final MoveTransition t3 = t1.getLatestBoard().currentPlayer().makeMove(MoveFactory.createMove(t1.getLatestBoard(), BoardUtils.getPieceAtPosition(t1.getLatestBoard(), "a5"), BoardUtils.getCoordinateAtPosition("e5")));
+        final MoveTransition t3 = t1.getLatestBoard().getCurrentPlayer().makeMove(MoveFactory.createMove(t1.getLatestBoard(), BoardUtils.getPieceAtPosition(t1.getLatestBoard(), "a5"), BoardUtils.getCoordinateAtPosition("e5")));
         assertTrue(t3.getMoveStatus().isDone());
     }
 
@@ -72,16 +72,16 @@ public final class PlayerTest {
     public void testUnmakeMove() {
         final Board board = Board.createStandardBoardWithDefaultTimer();
         final Move m1 = MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "e2"), BoardUtils.getCoordinateAtPosition("e4"));
-        final MoveTransition t1 = board.currentPlayer().makeMove(m1);
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(m1);
         assertTrue(t1.getMoveStatus().isDone());
-        t1.getLatestBoard().currentPlayer().getOpponent().undoMove(m1);
+        t1.getLatestBoard().getCurrentPlayer().getOpponent().undoMove(m1);
     }
 
     @Test
     public void testIllegalMove() {
         final Board board = Board.createStandardBoardWithDefaultTimer();
         final Move m1 = MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "e2"), BoardUtils.getCoordinateAtPosition("e6"));
-        final MoveTransition t1 = board.currentPlayer().makeMove(m1);
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(m1);
         assertFalse(t1.getMoveStatus().isDone());
     }
 }

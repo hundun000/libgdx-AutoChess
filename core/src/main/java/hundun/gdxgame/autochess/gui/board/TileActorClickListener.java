@@ -27,7 +27,7 @@ public class TileActorClickListener extends ClickListener {
 
             if (gameScreen.getGameBoardTable().getHumanPiece() == null) {
                 gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
-                if (gameScreen.getChessBoard().getTile(tileID).getPiece().getLeague() == gameScreen.getChessBoard().currentPlayer().getLeague()) {
+                if (gameScreen.getChessBoard().getTile(tileID).getPiece().getLeague() == gameScreen.getChessBoard().getCurrentPlayer().getLeague()) {
                     gameScreen.getGameBoardTable().updateHumanPiece(gameScreen.getChessBoard().getTile(tileID).getPiece());
                     if (gameScreen.getGameBoardTable().isHighlightMove()) {
                         gameScreen.getDisplayOnlyBoard().highlightLegalMove(gameScreen.getGameBoardTable(), gameScreen.getChessBoard());
@@ -35,9 +35,9 @@ public class TileActorClickListener extends ClickListener {
                 }
 
             } else {
-                if (gameScreen.getGameBoardTable().getHumanPiece().getLeague() == gameScreen.getChessBoard().currentPlayer().getLeague()) {
+                if (gameScreen.getGameBoardTable().getHumanPiece().getLeague() == gameScreen.getChessBoard().getCurrentPlayer().getLeague()) {
                     final Move move = Move.MoveFactory.createMove(gameScreen.getChessBoard(), gameScreen.getGameBoardTable().getHumanPiece(), tileID);
-                    final MoveTransition transition = gameScreen.getChessBoard().currentPlayer().makeMove(move);
+                    final MoveTransition transition = gameScreen.getChessBoard().getCurrentPlayer().makeMove(move);
                     if (transition.getMoveStatus().isDone()) {
                         gameScreen.getGameBoardTable().updateHumanPiece(null);
                         gameScreen.updateChessBoard(transition.getLatestBoard());
@@ -50,7 +50,7 @@ public class TileActorClickListener extends ClickListener {
                             gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
                             gameScreen.getMoveHistory().getMoveLog().addMove(move);
                             gameScreen.getMoveHistory().updateMoveHistory();
-                            if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer())) {
+                            if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
                                 gameScreen.getGameBoardTable().afterMove(move);
                             } else {
                                 gameScreen.getGameBoardTable().displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getStage());

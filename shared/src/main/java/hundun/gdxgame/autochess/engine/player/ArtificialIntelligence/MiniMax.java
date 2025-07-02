@@ -72,7 +72,7 @@ public final class MiniMax {
         return execute(board, null);
     }
     public Move execute(final Board board, @Null AiFilter aiFilter) {
-        final Player currentPlayer = board.currentPlayer();
+        final Player currentPlayer = board.getCurrentPlayer();
         final AtomicReference<Move> bestMove = new AtomicReference<>(Move.MoveFactory.getNullMove());
         if (currentPlayer.isTimeOut()) {
             this.setTerminateProcess(true);
@@ -84,16 +84,16 @@ public final class MiniMax {
 
         final ExecutorService executorService = Executors.newFixedThreadPool(this.nThreads);
 
-        var candidates = board.currentPlayer().getLegalMoves().stream()
+        var candidates = board.getCurrentPlayer().getLegalMoves().stream()
                 .filter(it -> aiFilter.filter(it))
                 .collect(Collectors.toList());
         Gdx.app.log(this.getClass().getSimpleName(), "candidates size: " + candidates.size());
         for (final Move move : MoveSorter.EXPENSIVE_SORT.sort(ImmutableList.copyOf(candidates))) {
-            final MoveTransition moveTransition = board.currentPlayer().makeMove(move);
+            final MoveTransition moveTransition = board.getCurrentPlayer().makeMove(move);
             this.quiescenceCount = 0;
 
             if (moveTransition.getMoveStatus().isDone()) {
-                if (moveTransition.getLatestBoard().currentPlayer().isInCheckmate()) {
+                if (moveTransition.getLatestBoard().getCurrentPlayer().isInCheckmate()) {
                     return move;
                 }
                 executorService.execute(() -> {
@@ -152,8 +152,8 @@ public final class MiniMax {
             return this.evaluator.evaluate(board, depth);
         }
         int currentHighest = highest;
-        for (final Move move : MoveSorter.STANDARD_SORT.sort((board.currentPlayer().getLegalMoves()))) {
-            final MoveTransition moveTransition = board.currentPlayer().makeMove(move);
+        for (final Move move : MoveSorter.STANDARD_SORT.sort((board.getCurrentPlayer().getLegalMoves()))) {
+            final MoveTransition moveTransition = board.getCurrentPlayer().makeMove(move);
             if (moveTransition.getMoveStatus().isDone()) {
                 final Board toBoard = moveTransition.getLatestBoard();
                 currentHighest = Math.max(currentHighest, min(toBoard,
@@ -174,8 +174,8 @@ public final class MiniMax {
             return this.evaluator.evaluate(board, depth);
         }
         int currentLowest = lowest;
-        for (final Move move : MoveSorter.STANDARD_SORT.sort((board.currentPlayer().getLegalMoves()))) {
-            final MoveTransition moveTransition = board.currentPlayer().makeMove(move);
+        for (final Move move : MoveSorter.STANDARD_SORT.sort((board.getCurrentPlayer().getLegalMoves()))) {
+            final MoveTransition moveTransition = board.getCurrentPlayer().makeMove(move);
             if (moveTransition.getMoveStatus().isDone()) {
                 final Board toBoard = moveTransition.getLatestBoard();
                 currentLowest = Math.min(currentLowest, max(toBoard,
@@ -191,7 +191,7 @@ public final class MiniMax {
     private int calculateQuiescenceDepth(final Board toBoard, final int depth) {
         if (depth == 1 && this.quiescenceCount < MAX_QUIESCENCE) {
             int activityMeasure = 0;
-            if (toBoard.currentPlayer().isInCheck()) {
+            if (toBoard.getCurrentPlayer().isInCheck()) {
                 activityMeasure += 1;
             }
             for (final Move move : BoardUtils.lastNMoves(toBoard, 2)) {

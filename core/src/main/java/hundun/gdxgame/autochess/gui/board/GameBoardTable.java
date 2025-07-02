@@ -175,8 +175,8 @@ public final class GameBoardTable extends Table {
     }
 
     public void displayTimeOutMessage(final Board chessBoard, final Stage stage) {
-        if (chessBoard.currentPlayer().isTimeOut()) {
-            final Label label = new Label(chessBoard.currentPlayer() + " player is timed out!", GuiUtils.UI_SKIN);
+        if (chessBoard.getCurrentPlayer().isTimeOut()) {
+            final Label label = new Label(chessBoard.getCurrentPlayer() + " player is timed out!", GuiUtils.UI_SKIN);
             label.setColor(Color.BLACK);
             new Dialog("Time out", GuiUtils.UI_SKIN).text(label).button("Ok").show(stage);
             this.updateGameEnd(GameProps.GameEnd.ENDED);
@@ -184,11 +184,11 @@ public final class GameBoardTable extends Table {
     }
 
     public void displayEndGameMessage(final Board chessBoard, final Stage stage) {
-        final String state = chessBoard.currentPlayer().isInCheckmate() ? "Checkmate" : chessBoard.currentPlayer().isInStalemate() ? "Stalemate" : null;
+        final String state = chessBoard.getCurrentPlayer().isInCheckmate() ? "Checkmate" : chessBoard.getCurrentPlayer().isInStalemate() ? "Stalemate" : null;
         if (state == null) {
             return;
         }
-        final Label label = new Label(chessBoard.currentPlayer() + " player is in " + state.toLowerCase() + " !", GuiUtils.UI_SKIN);
+        final Label label = new Label(chessBoard.getCurrentPlayer() + " player is in " + state.toLowerCase() + " !", GuiUtils.UI_SKIN);
         label.setColor(Color.BLACK);
         new Dialog(state, GuiUtils.UI_SKIN).text(label).button("Ok").show(stage);
         this.updateGameEnd(GameProps.GameEnd.ENDED);
@@ -207,9 +207,9 @@ public final class GameBoardTable extends Table {
 
     public void nextAutoPiece() {
 
-        if (isAIPlayer(gameScreen.getChessBoard().currentPlayer())
-                && !gameScreen.getChessBoard().currentPlayer().isInCheckmate()
-                && !gameScreen.getChessBoard().currentPlayer().isInStalemate()) {
+        if (isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
+                && !gameScreen.getChessBoard().getCurrentPlayer().isInCheckmate()
+                && !gameScreen.getChessBoard().getCurrentPlayer().isInStalemate()) {
             if (!getArtificialIntelligenceWorking()) {
                 Gdx.app.log(this.getClass().getSimpleName(), "startAI");
                 updateArtificialIntelligenceWorking(GameProps.ArtificialIntelligenceWorking.WORKING);

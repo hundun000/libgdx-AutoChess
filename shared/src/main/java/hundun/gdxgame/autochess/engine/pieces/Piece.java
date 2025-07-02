@@ -65,7 +65,7 @@ public abstract class Piece {
     protected final boolean isLegalMove(final Board board, final int candidateDestinationCoordinate) {
         try {
             //make a move, if the move is safe, return true, else false
-            final MoveTransition moveTransition = board.currentPlayer().makeMove(new MajorMove(board, this, candidateDestinationCoordinate));
+            final MoveTransition moveTransition = board.getCurrentPlayer().makeMove(new MajorMove(board, this, candidateDestinationCoordinate));
             return moveTransition.getMoveStatus().isDone();
         } catch (final RuntimeException e) {
             //for catching null board at the beginning of the game

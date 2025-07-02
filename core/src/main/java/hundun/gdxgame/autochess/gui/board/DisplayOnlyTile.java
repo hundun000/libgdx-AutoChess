@@ -6,11 +6,11 @@ import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.BoardUtils;
 import hundun.gdxgame.autochess.gui.GuiUtils;
 
-final class DisplayOnlyTile extends Image {
+public final class DisplayOnlyTile extends Image {
 
     private final int tileID;
 
-    protected DisplayOnlyTile(final int tileID) {
+    public DisplayOnlyTile(final int tileID) {
         super(GuiUtils.GET_TILE_TEXTURE_REGION("white"));
         this.tileID = tileID;
         this.setVisible(true);
@@ -42,7 +42,7 @@ final class DisplayOnlyTile extends Image {
     }
 
     public void repaint(final GameBoardTable gameBoardTable, final Board chessBoard, final DisplayOnlyBoard displayOnlyBoard) {
-        if (chessBoard.currentPlayer().isInCheck() && chessBoard.currentPlayer().getPlayerKing().getPiecePosition() == this.tileID) {
+        if (chessBoard.getCurrentPlayer().isInCheck() && chessBoard.getCurrentPlayer().getPlayerKing().getPiecePosition() == this.tileID) {
             this.setColor(Color.RED);
         } else if (gameBoardTable.getHumanMove() != null && gameBoardTable.isHighlightPreviousMove()) {
             this.setColor(this.getHumanMoveColor(gameBoardTable, displayOnlyBoard));

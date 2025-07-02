@@ -3,19 +3,21 @@ package hundun.gdxgame.autochess.engine.board;
 import hundun.gdxgame.autochess.engine.pieces.Pawn;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.engine.pieces.Rook;
+import lombok.Getter;
 
+@Getter
 public abstract class Move {
 
     private final Board board;
-    private final Piece movePiece;
+    private final Piece movedPiece;
     private final int destinationCoordinate;
-    private final boolean isFirstMove;
+    private final boolean firstMove;
 
-    private Move(final Board board, final Piece movePiece, final int destinationCoordinate) {
+    private Move(final Board board, final Piece movedPiece, final int destinationCoordinate) {
         this.board = board;
-        this.movePiece = movePiece;
+        this.movedPiece = movedPiece;
         this.destinationCoordinate = destinationCoordinate;
-        this.isFirstMove = movePiece != null && movePiece.isFirstMove();
+        this.firstMove = movedPiece != null && movedPiece.isFirstMove();
     }
 
     private Move(final Board board, final int destinationCoordinate) {
@@ -26,9 +28,9 @@ public abstract class Move {
     public int hashCode() {
         int result = 17;
         result = 31 * result + this.destinationCoordinate;
-        result = 31 * result + this.movePiece.hashCode();
-        result = 31 * result + this.movePiece.getPiecePosition();
-        result = result + (isFirstMove ? 1 : 0);
+        result = 31 * result + this.movedPiece.hashCode();
+        result = 31 * result + this.movedPiece.getPiecePosition();
+        result = result + (firstMove ? 1 : 0);
         return result;
     }
 
@@ -49,22 +51,6 @@ public abstract class Move {
                 this.getMovedPiece().equals(otherMove.getMovedPiece());
     }
 
-
-    public final Board getBoard() {
-        return this.board;
-    }
-
-    public final int getDestinationCoordinate() {
-        return this.destinationCoordinate;
-    }
-
-    public final Piece getMovedPiece() {
-        return this.movePiece;
-    }
-
-    public final boolean isFirstMove() {
-        return this.isFirstMove;
-    }
 
     public int getCurrentCoordinate() {
         return this.getMovedPiece().getPiecePosition();
@@ -88,18 +74,18 @@ public abstract class Move {
 
     public Board execute() {
 
-        final Board.Builder builder = new Board.Builder(this.board.getMoveCount() + 1, this.board.currentPlayer().getOpponent().getLeague(), null)
-                .updateWhiteTimer(this.board.whitePlayer().getMinute(), this.board.whitePlayer().getSecond(), this.board.whitePlayer().getMillisecond())
-                .updateBlackTimer(this.board.blackPlayer().getMinute(), this.board.blackPlayer().getSecond(), this.board.blackPlayer().getMillisecond());
+        final Board.Builder builder = new Board.Builder(this.board.getMoveCount() + 1, this.board.getCurrentPlayer().getOpponent().getLeague(), null)
+                .updateWhiteTimer(this.board.getWhitePlayer().getMinute(), this.board.getWhitePlayer().getSecond(), this.board.getWhitePlayer().getMillisecond())
+                .updateBlackTimer(this.board.getBlackPlayer().getMinute(), this.board.getBlackPlayer().getSecond(), this.board.getBlackPlayer().getMillisecond());
 
-        this.board.currentPlayer().getActivePieces().forEach(piece -> {
-            if (!this.movePiece.equals(piece)) {
+        this.board.getCurrentPlayer().getActivePieces().forEach(piece -> {
+            if (!this.movedPiece.equals(piece)) {
                 builder.setPiece(piece);
             }
         });
-        this.board.currentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
+        this.board.getCurrentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
 
-        builder.setPiece(this.movePiece.movedPiece(this));
+        builder.setPiece(this.movedPiece.movedPiece(this));
         builder.setTransitionMove(this);
 
         return builder.build();
@@ -224,16 +210,16 @@ public abstract class Move {
 
         @Override
         public Board execute() {
-            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().currentPlayer().getOpponent().getLeague(), null)
-                    .updateWhiteTimer(super.getBoard().whitePlayer().getMinute(), super.getBoard().whitePlayer().getSecond(), super.getBoard().whitePlayer().getMillisecond())
-                    .updateBlackTimer(super.getBoard().blackPlayer().getMinute(), super.getBoard().blackPlayer().getSecond(), super.getBoard().blackPlayer().getMillisecond());
+            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), null)
+                    .updateWhiteTimer(super.getBoard().getWhitePlayer().getMinute(), super.getBoard().getWhitePlayer().getSecond(), super.getBoard().getWhitePlayer().getMillisecond())
+                    .updateBlackTimer(super.getBoard().getBlackPlayer().getMinute(), super.getBoard().getBlackPlayer().getSecond(), super.getBoard().getBlackPlayer().getMillisecond());
 
-            super.getBoard().currentPlayer().getActivePieces().forEach(piece -> {
+            super.getBoard().getCurrentPlayer().getActivePieces().forEach(piece -> {
                 if (!super.getMovedPiece().equals(piece)) {
                     builder.setPiece(piece);
                 }
             });
-            super.getBoard().currentPlayer().getOpponent().getActivePieces().forEach(piece -> {
+            super.getBoard().getCurrentPlayer().getOpponent().getActivePieces().forEach(piece -> {
                 if (!piece.equals(this.getAttackedPiece())) {
                     builder.setPiece(piece);
                 }
@@ -291,16 +277,16 @@ public abstract class Move {
 
 
             final Board pawnMoveBoard = this.decoratedMove.execute();
-            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, pawnMoveBoard.currentPlayer().getLeague(), null)
-                    .updateWhiteTimer(super.getBoard().whitePlayer().getMinute(), super.getBoard().whitePlayer().getSecond(), super.getBoard().whitePlayer().getMillisecond())
-                    .updateBlackTimer(super.getBoard().blackPlayer().getMinute(), super.getBoard().blackPlayer().getSecond(), super.getBoard().blackPlayer().getMillisecond());
+            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, pawnMoveBoard.getCurrentPlayer().getLeague(), null)
+                    .updateWhiteTimer(super.getBoard().getWhitePlayer().getMinute(), super.getBoard().getWhitePlayer().getSecond(), super.getBoard().getWhitePlayer().getMillisecond())
+                    .updateBlackTimer(super.getBoard().getBlackPlayer().getMinute(), super.getBoard().getBlackPlayer().getSecond(), super.getBoard().getBlackPlayer().getMillisecond());
 
-            super.getBoard().currentPlayer().getActivePieces().forEach(piece -> {
+            super.getBoard().getCurrentPlayer().getActivePieces().forEach(piece -> {
                 if (!this.promotedPawn.equals(piece)) {
                     builder.setPiece(piece);
                 }
             });
-            super.getBoard().currentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
+            super.getBoard().getCurrentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
 
             this.setPromotedPiece(this.minimaxPromotionPiece);
             builder.setPiece(this.minimaxPromotionPiece.movedPiece(this));
@@ -343,16 +329,16 @@ public abstract class Move {
         public Board execute() {
             final Pawn movedPawn = (Pawn) super.getMovedPiece().movedPiece(this);
 
-            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().currentPlayer().getOpponent().getLeague(), movedPawn)
-                    .updateWhiteTimer(super.getBoard().whitePlayer().getMinute(), super.getBoard().whitePlayer().getSecond(), super.getBoard().whitePlayer().getMillisecond())
-                    .updateBlackTimer(super.getBoard().blackPlayer().getMinute(), super.getBoard().blackPlayer().getSecond(), super.getBoard().blackPlayer().getMillisecond());
+            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), movedPawn)
+                    .updateWhiteTimer(super.getBoard().getWhitePlayer().getMinute(), super.getBoard().getWhitePlayer().getSecond(), super.getBoard().getWhitePlayer().getMillisecond())
+                    .updateBlackTimer(super.getBoard().getBlackPlayer().getMinute(), super.getBoard().getBlackPlayer().getSecond(), super.getBoard().getBlackPlayer().getMillisecond());
 
-            super.getBoard().currentPlayer().getActivePieces().forEach(piece -> {
+            super.getBoard().getCurrentPlayer().getActivePieces().forEach(piece -> {
                 if (!super.getMovedPiece().equals(piece)) {
                     builder.setPiece(piece);
                 }
             });
-            super.getBoard().currentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
+            super.getBoard().getCurrentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
 
             builder.setPiece(movedPawn);
             builder.setTransitionMove(this);
@@ -390,9 +376,9 @@ public abstract class Move {
         @Override
         public Board execute() {
 
-            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().currentPlayer().getOpponent().getLeague(), null)
-                    .updateWhiteTimer(super.getBoard().whitePlayer().getMinute(), super.getBoard().whitePlayer().getSecond(), super.getBoard().whitePlayer().getMillisecond())
-                    .updateBlackTimer(super.getBoard().blackPlayer().getMinute(), super.getBoard().blackPlayer().getSecond(), super.getBoard().blackPlayer().getMillisecond());
+            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), null)
+                    .updateWhiteTimer(super.getBoard().getWhitePlayer().getMinute(), super.getBoard().getWhitePlayer().getSecond(), super.getBoard().getWhitePlayer().getMillisecond())
+                    .updateBlackTimer(super.getBoard().getBlackPlayer().getMinute(), super.getBoard().getBlackPlayer().getSecond(), super.getBoard().getBlackPlayer().getMillisecond());
 
             super.getBoard().getAllPieces().forEach(piece -> {
                 if (!super.getMovedPiece().equals(piece) && !this.castleRook.equals(piece)) {

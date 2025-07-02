@@ -76,8 +76,8 @@ public final class King extends Piece {
                 }
             }
         }
-        if (!this.isCastled && board.currentPlayer() != null) {
-            legalMoves.addAll(board.currentPlayer().calculateKingCastles(board.currentPlayer().getOpponent().getLegalMoves()));
+        if (!this.isCastled && board.getCurrentPlayer() != null) {
+            legalMoves.addAll(board.getCurrentPlayer().calculateKingCastles(board.getCurrentPlayer().getOpponent().getLegalMoves()));
         }
         return ImmutableList.copyOf(legalMoves);
     }

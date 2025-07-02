@@ -238,7 +238,7 @@ public final class MiniMaxTest {
         final MiniMax alphaBeta = new MiniMax(6);
         final Move bestMove = alphaBeta.execute(board);
         assertEquals(bestMove, MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "f7"), BoardUtils.getCoordinateAtPosition("h6")));
-        final MoveTransition t1 = board.currentPlayer().makeMove(bestMove);
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(bestMove);
         assertTrue(t1.getMoveStatus().isDone());
     }
 
@@ -248,7 +248,7 @@ public final class MiniMaxTest {
         final MiniMax alphaBeta = new MiniMax(5);
         final Move bestMove = alphaBeta.execute(board);
         assertEquals(bestMove, MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "a4"), BoardUtils.getCoordinateAtPosition("a3")));
-        final MoveTransition t1 = board.currentPlayer().makeMove(bestMove);
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(bestMove);
         assertTrue(t1.getMoveStatus().isDone());
     }
 
@@ -258,7 +258,7 @@ public final class MiniMaxTest {
         final MiniMax alphaBeta = new MiniMax(8);
         final Move bestMove = alphaBeta.execute(board);
         assertEquals(bestMove, MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "f8"), BoardUtils.getCoordinateAtPosition("f2")));
-        final MoveTransition t1 = board.currentPlayer().makeMove(bestMove);
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(bestMove);
         assertTrue(t1.getMoveStatus().isDone());
     }
 
@@ -268,7 +268,7 @@ public final class MiniMaxTest {
         final MiniMax alphaBeta = new MiniMax(6);
         final Move bestMove = alphaBeta.execute(board);
         assertEquals(bestMove, MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "h5"), BoardUtils.getCoordinateAtPosition("g6")));
-        final MoveTransition t1 = board.currentPlayer().makeMove(bestMove);
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(bestMove);
         assertTrue(t1.getMoveStatus().isDone());
     }
 
@@ -278,7 +278,7 @@ public final class MiniMaxTest {
         final MiniMax alphaBeta = new MiniMax(6);
         final Move bestMove = alphaBeta.execute(board);
         assertEquals(bestMove, MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "d6"), BoardUtils.getCoordinateAtPosition("d1")));
-        final MoveTransition t1 = board.currentPlayer().makeMove(bestMove);
+        final MoveTransition t1 = board.getCurrentPlayer().makeMove(bestMove);
         assertTrue(t1.getMoveStatus().isDone());
     }
 
@@ -286,9 +286,9 @@ public final class MiniMaxTest {
     public void testTimeOut() {
         final Board board = Board.createStandardBoard(0, 10, 99);
         final Move whiteMove = MoveFactory.createMove(board, BoardUtils.getPieceAtPosition(board, "e2"), BoardUtils.getCoordinateAtPosition("e4"));
-        final Board currentBoard = board.currentPlayer().makeMove(whiteMove).getLatestBoard();
-        while (!currentBoard.currentPlayer().isTimeOut()) {
-            currentBoard.currentPlayer().countDown();
+        final Board currentBoard = board.getCurrentPlayer().makeMove(whiteMove).getLatestBoard();
+        while (!currentBoard.getCurrentPlayer().isTimeOut()) {
+            currentBoard.getCurrentPlayer().countDown();
         }
         final Move bestMove = new MiniMax(2).execute(currentBoard);
         assertEquals(MoveFactory.getNullMove(), bestMove);

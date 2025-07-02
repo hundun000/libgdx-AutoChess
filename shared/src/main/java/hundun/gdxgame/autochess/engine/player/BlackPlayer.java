@@ -32,7 +32,7 @@ public final class BlackPlayer extends Player {
 
     @Override
     public Player getOpponent() {
-        return super.getBoard().whitePlayer();
+        return super.getBoard().getWhitePlayer();
     }
 
     @Override

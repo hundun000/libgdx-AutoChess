@@ -176,6 +176,6 @@ public final class StandardBoardEvaluation {
     }
 
     public int evaluate(final Board board, final int depth) {
-        return -scorePlayer(board.blackPlayer(), depth) + scorePlayer(board.whitePlayer(), depth);
+        return -scorePlayer(board.getBlackPlayer(), depth) + scorePlayer(board.getWhitePlayer(), depth);
     }
 }

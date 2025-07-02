@@ -6,6 +6,8 @@ import hundun.gdxgame.autochess.engine.pieces.*;
 import hundun.gdxgame.autochess.engine.player.BlackPlayer;
 import hundun.gdxgame.autochess.engine.player.Player;
 import hundun.gdxgame.autochess.engine.player.WhitePlayer;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 import static hundun.gdxgame.autochess.engine.board.BoardUtils.getBoardNumStream;
 import static hundun.gdxgame.autochess.engine.board.Move.MoveFactory;
 
+@Getter
 public final class Board {
 
     private final ImmutableList<Tile> gameBoard;
@@ -129,48 +132,16 @@ public final class Board {
         return builder.build();
     }
 
-    public int getMoveCount() {
-        return this.moveCount;
-    }
-
-    public Player currentPlayer() {
-        return this.currentPlayer;
-    }
-
-    public Player whitePlayer() {
-        return this.whitePlayer;
-    }
-
-    public Player blackPlayer() {
-        return this.blackPlayer;
-    }
-
-    public ImmutableList<Piece> getWhitePieces() {
-        return this.whitePieces;
-    }
-
-    public ImmutableList<Piece> getBlackPieces() {
-        return this.blackPieces;
-    }
-
-    public Pawn getEnPassantPawn() {
-        return this.enPassantPawn;
-    }
-
-    public Tile getTile(final int tileCoordinate) {
-        return this.gameBoard.get(tileCoordinate);
-    }
-
-    public Move getTransitionMove() {
-        return this.transitionMove;
-    }
-
     public ImmutableList<Piece> getAllPieces() {
         return new ImmutableList.Builder<Piece>().addAll(this.whitePieces).addAll(this.blackPieces).build();
     }
 
     private ImmutableList<Move> calculateLegalMoves(final ImmutableList<Piece> pieces) {
         return ImmutableList.copyOf(pieces.parallelStream().flatMap(piece -> piece.calculateLegalMoves(this).stream()).collect(Collectors.toList()));
+    }
+
+    public Tile getTile(final int tileCoordinate) {
+        return this.gameBoard.get(tileCoordinate);
     }
 
     public static final class Builder {
@@ -181,6 +152,7 @@ public final class Board {
         private final int moveCount;
         private int whiteMinute, whiteSecond, whiteMillisecond;
         private int blackMinute, blackSecond, blackMillisecond;
+        @Setter
         private Move transitionMove;
 
         public Builder(final int moveCount, final League nextMoveMaker, final Pawn enPassantPawn) {
@@ -204,10 +176,6 @@ public final class Board {
 
         public Board build() {
             return new Board(this);
-        }
-
-        public void setTransitionMove(final Move transitionMove) {
-            this.transitionMove = transitionMove;
         }
 
         public int moveCount() {

@@ -5,9 +5,11 @@ import hundun.gdxgame.autochess.engine.League;
 import hundun.gdxgame.autochess.engine.board.*;
 import hundun.gdxgame.autochess.engine.pieces.King;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
+import lombok.Getter;
 
 import java.util.stream.Collectors;
 
+@Getter
 public abstract class Player {
 
     private final Board board;
@@ -45,32 +47,10 @@ public abstract class Player {
         this.millisecond -= 1;
     }
 
-    public final Board getBoard() {
-        return this.board;
-    }
 
-    public final int getMinute() {
-        return this.minute;
-    }
-
-    public final int getSecond() {
-        return this.second;
-    }
-
-    public final int getMillisecond() {
-        return this.millisecond;
-    }
 
     public final boolean isTimeOut() {
         return this.minute == 0 && this.second == 0 && this.millisecond == 0;
-    }
-
-    public final King getPlayerKing() {
-        return this.playerKing;
-    }
-
-    public final ImmutableList<Move> getLegalMoves() {
-        return this.legalMoves;
     }
 
     public static ImmutableList<Move> calculateAttacksOnTile(final int piecePosition, final ImmutableList<Move> moves) {
@@ -135,8 +115,8 @@ public abstract class Player {
 
         final Board transitionBoard = move.execute();
         if (transitionBoard != null) {
-            final ImmutableList<Move> currentPlayerLegals = transitionBoard.currentPlayer().getLegalMoves();
-            final ImmutableList<Move> kingAttacks = Player.calculateAttacksOnTile(transitionBoard.currentPlayer().getOpponent().getPlayerKing().getPiecePosition(), currentPlayerLegals);
+            final ImmutableList<Move> currentPlayerLegals = transitionBoard.getCurrentPlayer().getLegalMoves();
+            final ImmutableList<Move> kingAttacks = Player.calculateAttacksOnTile(transitionBoard.getCurrentPlayer().getOpponent().getPlayerKing().getPiecePosition(), currentPlayerLegals);
 
             if (!kingAttacks.isEmpty()) {
                 return new MoveTransition(board, board, MoveStatus.LEAVES_PLAYER_IN_CHECK);

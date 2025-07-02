@@ -30,17 +30,17 @@ public final class PawnPromotionInterface {
 
     private Board promoteLibGDXPawn(final Board board, final Move.PawnPromotion pawnPromotion) {
         //promotion take a move, which the move flips player turn after executed, so this should not flip again
-        final Board.Builder builder = new Board.Builder(pawnPromotion.getBoard().getMoveCount() + 1, board.currentPlayer().getOpponent().getLeague(), null)
-                .updateWhiteTimer(pawnPromotion.getBoard().whitePlayer().getMinute(), pawnPromotion.getBoard().whitePlayer().getSecond(), pawnPromotion.getBoard().whitePlayer().getMillisecond())
-                .updateBlackTimer(pawnPromotion.getBoard().blackPlayer().getMinute(), pawnPromotion.getBoard().blackPlayer().getSecond(), pawnPromotion.getBoard().blackPlayer().getMillisecond());
+        final Board.Builder builder = new Board.Builder(pawnPromotion.getBoard().getMoveCount() + 1, board.getCurrentPlayer().getOpponent().getLeague(), null)
+                .updateWhiteTimer(pawnPromotion.getBoard().getWhitePlayer().getMinute(), pawnPromotion.getBoard().getWhitePlayer().getSecond(), pawnPromotion.getBoard().getWhitePlayer().getMillisecond())
+                .updateBlackTimer(pawnPromotion.getBoard().getBlackPlayer().getMinute(), pawnPromotion.getBoard().getBlackPlayer().getSecond(), pawnPromotion.getBoard().getBlackPlayer().getMillisecond());
 
-        pawnPromotion.getBoard().currentPlayer().getActivePieces().forEach(piece -> {
+        pawnPromotion.getBoard().getCurrentPlayer().getActivePieces().forEach(piece -> {
             if (!pawnPromotion.getPromotedPawn().equals(piece)) {
                 builder.setPiece(piece);
             }
         });
 
-        pawnPromotion.getBoard().currentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
+        pawnPromotion.getBoard().getCurrentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
 
         builder.setPiece(pawnPromotion.getPromotedPiece().movedPiece(pawnPromotion));
         builder.setTransitionMove(pawnPromotion);
@@ -61,7 +61,7 @@ public final class PawnPromotionInterface {
                     gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
                     gameScreen.getMoveHistory().getMoveLog().addMove(pawnPromotion);
                     gameScreen.getMoveHistory().updateMoveHistory();
-                    if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().currentPlayer())) {
+                    if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
                         gameScreen.getGameBoardTable().afterMove(pawnPromotion);
                     } else {
                         gameScreen.getGameBoardTable().displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getStage());
