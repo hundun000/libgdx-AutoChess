@@ -9,7 +9,7 @@ import hundun.gdxgame.autochess.engine.pieces.King;
 import hundun.gdxgame.autochess.engine.pieces.Pawn;
 import org.junit.Test;
 
-import static hundun.gdxgame.autochess.engine.board.Board.Builder;
+import static hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import static hundun.gdxgame.autochess.engine.board.Move.MoveFactory;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -18,7 +18,7 @@ public final class StaleMateTest {
     @Test
     public void testAnandKramnikStaleMate() {
 
-        final Builder builder = new Builder(0, League.BLACK, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.BLACK, null);
         // Black Layout
         builder.setPiece(new Pawn(League.BLACK, 14));
         builder.setPiece(new Pawn(League.BLACK, 21));
@@ -39,7 +39,7 @@ public final class StaleMateTest {
 
     @Test
     public void testAnonymousStaleMate() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new King(League.BLACK, 2, false, false));
         // White Layout
@@ -57,7 +57,7 @@ public final class StaleMateTest {
 
     @Test
     public void testAnonymousStaleMate2() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new King(League.BLACK, 0, false, false));
         // White Layout

@@ -69,7 +69,7 @@ public final class GamePreference extends TextButton {
                         protected void result(final Object object) {
                             try {
                                 gameScreen.updateChessBoard(FenUtilities.createGameFromFEN(fenTextFiled.getText()));
-                                gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                                gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                                 gameScreen.getMoveHistoryBoard().getMoveLog().clear();
                                 gameScreen.getMoveHistoryBoard().updateMoveHistory();
                             } catch (final RuntimeException ignored) {
@@ -161,7 +161,7 @@ public final class GamePreference extends TextButton {
             gameScreen.updateChessBoard(gameScreen.getChessBoard().getCurrentPlayer().undoMove(lastMove).getPreviousBoard());
             gameScreen.getGameBoardTable().updateHumanMove(null);
             gameScreen.getGameBoardTable().updateAiMove(null);
-            gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+            gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
             gameScreen.getMoveHistoryBoard().updateMoveHistory();
         }
     }
@@ -193,8 +193,8 @@ public final class GamePreference extends TextButton {
                 buttons[i].addListener(new ClickListener() {
                     @Override
                     public void clicked(final InputEvent event, final float x, final float y) {
-                        gameScreen.getDisplayOnlyBoard().setTileColor(GuiUtils.BOARD_COLORS.get(finalI));
-                        gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                        gameScreen.getBoardLayerTable().setTileColor(GuiUtils.BOARD_COLORS.get(finalI));
+                        gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                         promoteDialog.remove();
                     }
                 });
@@ -213,7 +213,7 @@ public final class GamePreference extends TextButton {
 
 
                     gameScreen.getGameBoardTable().updateBoardDirection();
-                    gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                    gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
 
 
                     gameScreen.getMoveHistoryBoard().changeMoveHistoryDirection();

@@ -26,11 +26,11 @@ public class TileActorClickListener extends ClickListener {
             }
 
             if (gameScreen.getGameBoardTable().getHumanPiece() == null) {
-                gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                 if (gameScreen.getChessBoard().getTile(tileID).getPiece().getLeague() == gameScreen.getChessBoard().getCurrentPlayer().getLeague()) {
                     gameScreen.getGameBoardTable().updateHumanPiece(gameScreen.getChessBoard().getTile(tileID).getPiece());
                     if (gameScreen.getGameBoardTable().isHighlightMove()) {
-                        gameScreen.getDisplayOnlyBoard().highlightLegalMove(gameScreen.getGameBoardTable(), gameScreen.getChessBoard());
+                        gameScreen.getBoardLayerTable().highlightLegalMove(gameScreen.getGameBoardTable(), gameScreen.getChessBoard());
                     }
                 }
 
@@ -47,7 +47,7 @@ public class TileActorClickListener extends ClickListener {
                             //display pawn promotion interface
                             new PawnPromotionInterface().startLibGDXPromotion(gameScreen, (Move.PawnPromotion) move);
                         } else {
-                            gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                            gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                             gameScreen.getMoveHistoryBoard().getMoveLog().addMove(move);
                             gameScreen.getMoveHistoryBoard().updateMoveHistory();
                             if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
@@ -58,13 +58,13 @@ public class TileActorClickListener extends ClickListener {
                         }
                     } else {
                         gameScreen.getGameBoardTable().updateHumanPiece(tileActor.getPiece(gameScreen.getChessBoard(), gameScreen.getGameBoardTable().getHumanPiece(), tileID));
-                        gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                        gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                         if (tileActor.getPiece(gameScreen.getChessBoard(), gameScreen.getGameBoardTable().getHumanPiece(), tileID) != null && gameScreen.getGameBoardTable().isHighlightMove()) {
-                            gameScreen.getDisplayOnlyBoard().highlightLegalMove(gameScreen.getGameBoardTable(), gameScreen.getChessBoard());
+                            gameScreen.getBoardLayerTable().highlightLegalMove(gameScreen.getGameBoardTable(), gameScreen.getChessBoard());
                         }
                     }
                 } else {
-                    gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                    gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                     gameScreen.getGameBoardTable().updateHumanPiece(null);
                 }
             }

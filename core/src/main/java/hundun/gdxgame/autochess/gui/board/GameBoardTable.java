@@ -16,6 +16,7 @@ import hundun.gdxgame.autochess.engine.player.ArtificialIntelligence.MiniMax.AiF
 import hundun.gdxgame.autochess.engine.player.Player;
 import hundun.gdxgame.autochess.gui.ArtificialIntelligence;
 import hundun.gdxgame.autochess.gui.GuiUtils;
+import hundun.gdxgame.autochess.gui.board.GameProps.BoardDirectionStrategy;
 import hundun.gdxgame.autochess.gui.board.GameProps.PlayerType;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
 
@@ -36,7 +37,7 @@ public final class GameBoardTable extends Table {
     private GameProps.HighlightMove highlightMove;
     private GameProps.ArtificialIntelligenceWorking artificialIntelligenceWorking;
     private GameProps.PlayerType whitePlayerType, blackPlayerType;
-    public GameProps.BoardDirection boardDirection;
+    public BoardDirectionStrategy boardDirectionStrategy;
     final GameScreen gameScreen;
 
     public List<Piece> autoWaitingPieces = new ArrayList<>();
@@ -68,7 +69,7 @@ public final class GameBoardTable extends Table {
         //immutable
         this.artificialIntelligence = new ArtificialIntelligence();
 
-        this.boardDirection = GameProps.BoardDirection.NORMAL_BOARD;
+        this.boardDirectionStrategy = BoardDirectionStrategy.NORMAL_BOARD;
         this.setFillParent(true);
         for (int i = 0; i < BoardUtils.NUM_TILES; i += 1) {
             if (i % 8 == 0) {
@@ -110,7 +111,7 @@ public final class GameBoardTable extends Table {
     }
 
     public void updateBoardDirection() {
-        this.boardDirection = this.boardDirection.opposite();
+        this.boardDirectionStrategy = this.boardDirectionStrategy.opposite();
     }
 
     public void updateWhitePlayerType(final GameProps.PlayerType playerType) {
@@ -170,8 +171,8 @@ public final class GameBoardTable extends Table {
         return player.getLeague() == League.WHITE ? this.whitePlayerType == GameProps.PlayerType.COMPUTER : this.blackPlayerType == GameProps.PlayerType.COMPUTER;
     }
 
-    public void drawBoard(final GameScreen gameScreen, final Board chessBoard, final DisplayOnlyBoard displayOnlyBoard) {
-        this.boardDirection.drawBoard(gameScreen, this, chessBoard, displayOnlyBoard);
+    public void rebuildGameBoardTable(final GameScreen gameScreen, final Board chessBoard, final BoardLayerTable boardLayerTable) {
+        this.boardDirectionStrategy.rebuildGameBoardTable(gameScreen, this, chessBoard, boardLayerTable);
     }
 
     public void displayTimeOutMessage(final Board chessBoard, final Stage stage) {

@@ -10,7 +10,7 @@ import hundun.gdxgame.autochess.engine.player.ArtificialIntelligence.PawnStructu
 import hundun.gdxgame.autochess.engine.player.ArtificialIntelligence.StandardBoardEvaluation;
 import org.junit.Test;
 
-import static hundun.gdxgame.autochess.engine.board.Board.Builder;
+import static hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import static org.testng.Assert.assertEquals;
 
 public final class PawnStructureTest {
@@ -39,7 +39,7 @@ public final class PawnStructureTest {
 
     @Test
     public void testIsolatedPawnByExample3() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new King(League.BLACK, 4, false, false));
         builder.setPiece(new Pawn(League.BLACK, 12));

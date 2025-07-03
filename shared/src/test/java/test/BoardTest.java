@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static hundun.gdxgame.autochess.engine.board.Board.Builder;
+import static hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import static hundun.gdxgame.autochess.engine.board.Move.MoveFactory;
 import static org.junit.Assert.*;
 import static org.testng.Assert.assertThrows;
@@ -95,7 +95,7 @@ public final class BoardTest {
 
     @Test
     public void testKingMove() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
 
         builder.setPiece(new Pawn(League.BLACK, 12));
         builder.setPiece(new Pawn(League.WHITE, 52));
@@ -155,7 +155,7 @@ public final class BoardTest {
     @Test
     public void testInvalidBoard() {
         assertThrows(RuntimeException.class, () -> {
-            final Builder builder = new Builder(0, League.WHITE, null);
+            final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
             // Black Layout
             builder.setPiece(new Rook(League.BLACK, 0))
                     .setPiece(new Knight(League.BLACK, 1))

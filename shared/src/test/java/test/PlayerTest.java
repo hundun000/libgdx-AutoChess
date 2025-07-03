@@ -11,7 +11,7 @@ import hundun.gdxgame.autochess.engine.pieces.Rook;
 import hundun.gdxgame.autochess.engine.player.ArtificialIntelligence.StandardBoardEvaluation;
 import org.junit.Test;
 
-import static hundun.gdxgame.autochess.engine.board.Board.Builder;
+import static hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import static hundun.gdxgame.autochess.engine.board.Move.MoveFactory;
 import static org.testng.Assert.*;
 
@@ -48,7 +48,7 @@ public final class PlayerTest {
 
     @Test
     public void testDiscoveredCheck() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new King(League.BLACK, 4, false, false));
         builder.setPiece(new Rook(League.BLACK, 24));

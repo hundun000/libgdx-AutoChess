@@ -262,7 +262,7 @@ public final class GameMenu extends TextButton {
                 gameScreen.getGameBoardTable().updateHumanPiece(null);
                 gameScreen.getGameBoardTable().updateAiMove(null);
                 gameScreen.getGameBoardTable().updateHumanMove(null);
-                gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                 gameScreen.getGameBoardTable().updateGameEnd(GameProps.GameEnd.ONGOING);
                 gameScreen.getMoveHistoryBoard().updateMoveHistory();
             }
@@ -415,7 +415,7 @@ public final class GameMenu extends TextButton {
                         gameScreen.getGameBoardTable().updateAiMove(null);
                         gameScreen.getGameBoardTable().updateHumanMove(null);
                         gameScreen.getMoveHistoryBoard().updateMoveHistory();
-                        gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                        gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                         gameScreen.getGameBoardTable().updateGameEnd(GameProps.GameEnd.ONGOING);
                         final Label gameLoadedLabel = new Label("Game Loaded!", GuiUtils.UI_SKIN);
                         gameLoadedLabel.setColor(Color.BLACK);

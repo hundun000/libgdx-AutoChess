@@ -86,7 +86,7 @@ public final class ArtificialIntelligence {
                     if (!bestMove.equals(Move.MoveFactory.getNullMove())) {
                         gameScreen.getMoveHistoryBoard().getMoveLog().addMove(bestMove);
                         gameScreen.getMoveHistoryBoard().updateMoveHistory();
-                        gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                        gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                         gameScreen.getGameBoardTable().afterMove(bestMove);
                     } else {
                         gameScreen.getGameBoardTable().afterMove(bestMove);

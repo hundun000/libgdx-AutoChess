@@ -45,7 +45,7 @@ public final class GameOption extends TextButton {
             this.addListener(new ClickListener() {
                 @Override
                 public void clicked(final InputEvent event, final float x, final float y) {
-                    gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                    gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                     dialog.remove();
                     for (final GameOptionCheckBox gameOptionCheckBox : gameOptionCheckBoxList) {
                         gameOptionCheckBox.update();

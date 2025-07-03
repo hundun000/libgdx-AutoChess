@@ -11,11 +11,11 @@ import hundun.gdxgame.autochess.gui.GuiUtils;
 import lombok.Setter;
 
 @Setter
-public final class DisplayOnlyBoard extends Table {
+public final class BoardLayerTable extends Table {
 
     private GuiUtils.TILE_COLOR tileColor;
 
-    public DisplayOnlyBoard() {
+    public BoardLayerTable() {
         this.setFillParent(true);
         this.tileColor = GuiUtils.TILE_COLOR.CLASSIC;
         for (int i = 0; i < BoardUtils.NUM_TILES; i += 1) {
@@ -51,7 +51,7 @@ public final class DisplayOnlyBoard extends Table {
         final Piece piece = gameBoardTable.getHumanPiece();
         final ImmutableList<Move> moveList = piece != null && piece.getLeague() == chessBoard.getCurrentPlayer().getLeague() ? ImmutableList.copyOf(piece.calculateLegalMoves(chessBoard)) : ImmutableList.of();
         for (final Move move : moveList) {
-            final int tileID = gameBoardTable.boardDirection.flipped() ? 63 - move.getDestinationCoordinate() : move.getDestinationCoordinate();
+            final int tileID = gameBoardTable.boardDirectionStrategy.flipped() ? 63 - move.getDestinationCoordinate() : move.getDestinationCoordinate();
             if (move.isAttack() || move.isPromotionMove() && ((Move.PawnPromotion) move).getDecoratedMove().isAttack()) {
                 this.getChildren().get(tileID).setColor(new Color(204 / 255f, 0 / 255f, 0 / 255f, 1));
             } else {

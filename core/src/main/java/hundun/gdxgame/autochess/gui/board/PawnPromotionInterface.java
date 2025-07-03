@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import hundun.gdxgame.autochess.engine.board.Board;
+import hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import hundun.gdxgame.autochess.engine.board.Move;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.gui.GuiUtils;
@@ -30,7 +31,7 @@ public final class PawnPromotionInterface {
 
     private Board promoteLibGDXPawn(final Board board, final Move.PawnPromotion pawnPromotion) {
         //promotion take a move, which the move flips player turn after executed, so this should not flip again
-        final Board.Builder builder = new Board.Builder(pawnPromotion.getBoard().getMoveCount() + 1, board.getCurrentPlayer().getOpponent().getLeague(), null)
+        final BoardBuilder builder = new BoardBuilder(pawnPromotion.getBoard().getMoveCount() + 1, board.getCurrentPlayer().getOpponent().getLeague(), null)
                 .updateWhiteTimer(pawnPromotion.getBoard().getWhitePlayer().getMinute(), pawnPromotion.getBoard().getWhitePlayer().getSecond(), pawnPromotion.getBoard().getWhitePlayer().getMillisecond())
                 .updateBlackTimer(pawnPromotion.getBoard().getBlackPlayer().getMinute(), pawnPromotion.getBoard().getBlackPlayer().getSecond(), pawnPromotion.getBoard().getBlackPlayer().getMillisecond());
 
@@ -58,7 +59,7 @@ public final class PawnPromotionInterface {
                     pawnPromotion.setPromotedPiece(getPromotionPieces.get(finalI));
                     promoteDialog.remove();
                     gameScreen.updateChessBoard(promoteLibGDXPawn(gameScreen.getChessBoard(), pawnPromotion));
-                    gameScreen.getGameBoardTable().drawBoard(gameScreen, gameScreen.getChessBoard(), gameScreen.getDisplayOnlyBoard());
+                    gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
                     gameScreen.getMoveHistoryBoard().getMoveLog().addMove(pawnPromotion);
                     gameScreen.getMoveHistoryBoard().updateMoveHistory();
                     if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {

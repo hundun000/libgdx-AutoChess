@@ -53,15 +53,7 @@ public final class AutoChessGame extends BaseHundunGame<Void> {
     }
 
     public void gotoGameScreen(final GameScreen.BOARD_STATE board_state, final Board board) {
-        this.gameScreen.updateChessBoard(board);
-        if (board_state == GameScreen.BOARD_STATE.NEW_GAME) {
-            this.gameScreen.getMoveHistoryBoard().getMoveLog().clear();
-        }
-        this.gameScreen.getGameBoardTable().updateAiMove(null);
-        this.gameScreen.getGameBoardTable().updateHumanMove(null);
-        this.gameScreen.getMoveHistoryBoard().updateMoveHistory();
-        this.gameScreen.getGameBoardTable().drawBoard(this.gameScreen, gameScreen.getChessBoard(), this.gameScreen.getDisplayOnlyBoard());
-        this.gameScreen.getGameBoardTable().updateGameEnd(GameEnd.ONGOING);
+        this.gameScreen.newGame(board, board_state);
 
         screenManager.pushScreen(this.gameScreen, null);
     }

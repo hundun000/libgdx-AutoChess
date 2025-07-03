@@ -10,7 +10,7 @@ import hundun.gdxgame.autochess.engine.player.ArtificialIntelligence.MiniMax;
 import hundun.gdxgame.autochess.engine.pieces.*;
 import org.junit.Test;
 
-import static hundun.gdxgame.autochess.engine.board.Board.Builder;
+import static hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import static hundun.gdxgame.autochess.engine.board.Move.MoveFactory;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -19,7 +19,7 @@ public final class MiniMaxTest {
 
     @Test
     public void testOpeningDepth4BlackMovesFirst() {
-        final Builder builder = new Builder(0, League.BLACK, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.BLACK, null);
         // Black Layout
         builder.setPiece(new Rook(League.BLACK, 0));
         builder.setPiece(new Knight(League.BLACK, 1));
@@ -63,7 +63,7 @@ public final class MiniMaxTest {
 
     @Test
     public void advancedLevelProblem2NakamuraShirov() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new King(League.BLACK, 5, false, false));
         builder.setPiece(new Pawn(League.BLACK, 10));
@@ -108,7 +108,7 @@ public final class MiniMaxTest {
 
     @Test
     public void eloTest2() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new Knight(League.BLACK, 2));
         builder.setPiece(new Queen(League.BLACK, 3));
@@ -144,7 +144,7 @@ public final class MiniMaxTest {
 
     @Test
     public void eloTest3() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new Rook(League.BLACK, 11));
         builder.setPiece(new Pawn(League.BLACK, 14));
@@ -178,7 +178,7 @@ public final class MiniMaxTest {
 
     @Test
     public void testCheckmateHorizon() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new Rook(League.BLACK, 11));
         builder.setPiece(new Pawn(League.BLACK, 16));
@@ -202,7 +202,7 @@ public final class MiniMaxTest {
 
     @Test
     public void testBlackInTrouble() {
-        final Builder builder = new Builder(0, League.WHITE, null);
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
         // Black Layout
         builder.setPiece(new King(League.BLACK, 7, false, false));
         builder.setPiece(new Pawn(League.BLACK, 8));

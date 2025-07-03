@@ -10,7 +10,7 @@ import hundun.gdxgame.autochess.engine.pieces.*;
 
 import java.util.stream.Collectors;
 
-import static hundun.gdxgame.autochess.engine.board.Board.Builder;
+import static hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import static hundun.gdxgame.autochess.engine.board.Board.createStandardBoardForMoveHistory;
 
 public final class FenUtilities {
@@ -129,7 +129,7 @@ public final class FenUtilities {
 
         final League playerLeague = getLeague(fenPartitions[1]);
 
-        final Builder builder = new Builder(Integer.parseInt(fenPartitions[fenPartitions.length - 1]), playerLeague, getEnPassantPawn(playerLeague, fenPartitions[3]));
+        final BoardBuilder builder = new BoardBuilder(Integer.parseInt(fenPartitions[fenPartitions.length - 1]), playerLeague, getEnPassantPawn(playerLeague, fenPartitions[3]));
 
         final boolean whiteKingSideCastle = kingSideCastle(fenPartitions[2], true);
         final boolean whiteQueenSideCastle = queenSideCastle(fenPartitions[2], true);

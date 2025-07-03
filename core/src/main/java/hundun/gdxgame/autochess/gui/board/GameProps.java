@@ -5,6 +5,8 @@ import hundun.gdxgame.autochess.engine.board.BoardUtils;
 import hundun.gdxgame.autochess.gui.GuiUtils;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
 
+import java.util.stream.IntStream;
+
 public final class GameProps {
 
     private GameProps() {
@@ -96,28 +98,16 @@ public final class GameProps {
         }
     }
 
-    public enum BoardDirection {
+    public enum BoardDirectionStrategy {
         NORMAL_BOARD {
+
             @Override
-            public void drawBoard(final GameScreen gameScreen, final GameBoardTable gameBoardTable, final Board chessBoard, final DisplayOnlyBoard displayOnlyBoard) {
-                gameBoardTable.clearChildren();
-                displayOnlyBoard.clearChildren();
-                for (int i = 0; i < BoardUtils.NUM_TILES; i += 1) {
-                    if (i % 8 == 0) {
-                        gameBoardTable.row();
-                        displayOnlyBoard.row();
-                    }
-                    gameBoardTable.add(new TileActor(gameScreen, gameBoardTable.textureRegion(chessBoard, i), i)).size(GuiUtils.TILE_SIZE);
-                    final DisplayOnlyTile tile = new DisplayOnlyTile(i);
-                    tile.repaint(gameBoardTable, chessBoard, gameScreen.getDisplayOnlyBoard());
-                    displayOnlyBoard.add(tile).size(GuiUtils.TILE_SIZE);
-                }
-                gameBoardTable.validate();
-                displayOnlyBoard.validate();
+            protected IntStream getRebuildGameBoardTableIteration() {
+                return IntStream.iterate(0, n -> n + 1).limit(BoardUtils.NUM_TILES - 1);
             }
 
             @Override
-            public BoardDirection opposite() {
+            public BoardDirectionStrategy opposite() {
                 return FLIP_BOARD;
             }
 
@@ -127,26 +117,14 @@ public final class GameProps {
             }
         },
         FLIP_BOARD {
+
             @Override
-            public void drawBoard(final GameScreen gameScreen, final GameBoardTable gameBoardTable, final Board chessBoard, final DisplayOnlyBoard displayOnlyBoard) {
-                gameBoardTable.clearChildren();
-                displayOnlyBoard.clearChildren();
-                for (int i = BoardUtils.NUM_TILES - 1; i >= 0; i -= 1) {
-                    gameBoardTable.add(new TileActor(gameScreen, gameBoardTable.textureRegion(chessBoard, i), i)).size(GuiUtils.TILE_SIZE);
-                    final DisplayOnlyTile tile = new DisplayOnlyTile(i);
-                    tile.repaint(gameBoardTable, chessBoard, gameScreen.getDisplayOnlyBoard());
-                    displayOnlyBoard.add(tile).size(GuiUtils.TILE_SIZE);
-                    if (i % 8 == 0) {
-                        gameBoardTable.row();
-                        displayOnlyBoard.row();
-                    }
-                }
-                gameBoardTable.validate();
-                displayOnlyBoard.validate();
+            protected IntStream getRebuildGameBoardTableIteration() {
+                return IntStream.iterate(BoardUtils.NUM_TILES - 1, n -> n - 1).limit(BoardUtils.NUM_TILES - 1);
             }
 
             @Override
-            public BoardDirection opposite() {
+            public BoardDirectionStrategy opposite() {
                 return NORMAL_BOARD;
             }
 
@@ -156,10 +134,32 @@ public final class GameProps {
             }
         };
 
-        public abstract BoardDirection opposite();
+        public abstract BoardDirectionStrategy opposite();
 
         public abstract boolean flipped();
 
-        public abstract void drawBoard(final GameScreen gameScreen, final GameBoardTable gameBoardTable, final Board chessBoard, final DisplayOnlyBoard displayOnlyBoard);
+        public void rebuildGameBoardTable(final GameScreen gameScreen, final GameBoardTable chessLayerTable, final Board chessBoard, final BoardLayerTable boardLayerTable) {
+            chessLayerTable.clearChildren();
+            boardLayerTable.clearChildren();
+            IntStream iteration = getRebuildGameBoardTableIteration();
+
+            iteration.forEachOrdered(i -> {
+                chessLayerTable.add(new TileActor(gameScreen, chessLayerTable.textureRegion(chessBoard, i), i)).size(GuiUtils.TILE_SIZE);
+                final DisplayOnlyTile tile = new DisplayOnlyTile(i);
+                tile.repaint(chessLayerTable, chessBoard, gameScreen.getBoardLayerTable());
+                boardLayerTable.add(tile).size(GuiUtils.TILE_SIZE);
+                if (i % 8 == 0) {
+                    chessLayerTable.row();
+                    boardLayerTable.row();
+                }
+            });
+
+            chessLayerTable.validate();
+            boardLayerTable.validate();
+        }
+
+        protected abstract IntStream getRebuildGameBoardTableIteration();
+
+        ;
     }
 }

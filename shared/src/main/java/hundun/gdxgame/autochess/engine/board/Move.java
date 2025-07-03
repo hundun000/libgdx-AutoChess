@@ -1,5 +1,6 @@
 package hundun.gdxgame.autochess.engine.board;
 
+import hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import hundun.gdxgame.autochess.engine.pieces.Pawn;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.engine.pieces.Rook;
@@ -74,7 +75,7 @@ public abstract class Move {
 
     public Board execute() {
 
-        final Board.Builder builder = new Board.Builder(this.board.getMoveCount() + 1, this.board.getCurrentPlayer().getOpponent().getLeague(), null)
+        final BoardBuilder builder = new BoardBuilder(this.board.getMoveCount() + 1, this.board.getCurrentPlayer().getOpponent().getLeague(), null)
                 .updateWhiteTimer(this.board.getWhitePlayer().getMinute(), this.board.getWhitePlayer().getSecond(), this.board.getWhitePlayer().getMillisecond())
                 .updateBlackTimer(this.board.getBlackPlayer().getMinute(), this.board.getBlackPlayer().getSecond(), this.board.getBlackPlayer().getMillisecond());
 
@@ -210,7 +211,7 @@ public abstract class Move {
 
         @Override
         public Board execute() {
-            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), null)
+            final BoardBuilder builder = new BoardBuilder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), null)
                     .updateWhiteTimer(super.getBoard().getWhitePlayer().getMinute(), super.getBoard().getWhitePlayer().getSecond(), super.getBoard().getWhitePlayer().getMillisecond())
                     .updateBlackTimer(super.getBoard().getBlackPlayer().getMinute(), super.getBoard().getBlackPlayer().getSecond(), super.getBoard().getBlackPlayer().getMillisecond());
 
@@ -277,7 +278,7 @@ public abstract class Move {
 
 
             final Board pawnMoveBoard = this.decoratedMove.execute();
-            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, pawnMoveBoard.getCurrentPlayer().getLeague(), null)
+            final BoardBuilder builder = new BoardBuilder(super.getBoard().getMoveCount() + 1, pawnMoveBoard.getCurrentPlayer().getLeague(), null)
                     .updateWhiteTimer(super.getBoard().getWhitePlayer().getMinute(), super.getBoard().getWhitePlayer().getSecond(), super.getBoard().getWhitePlayer().getMillisecond())
                     .updateBlackTimer(super.getBoard().getBlackPlayer().getMinute(), super.getBoard().getBlackPlayer().getSecond(), super.getBoard().getBlackPlayer().getMillisecond());
 
@@ -329,7 +330,7 @@ public abstract class Move {
         public Board execute() {
             final Pawn movedPawn = (Pawn) super.getMovedPiece().movedPiece(this);
 
-            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), movedPawn)
+            final BoardBuilder builder = new BoardBuilder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), movedPawn)
                     .updateWhiteTimer(super.getBoard().getWhitePlayer().getMinute(), super.getBoard().getWhitePlayer().getSecond(), super.getBoard().getWhitePlayer().getMillisecond())
                     .updateBlackTimer(super.getBoard().getBlackPlayer().getMinute(), super.getBoard().getBlackPlayer().getSecond(), super.getBoard().getBlackPlayer().getMillisecond());
 
@@ -376,7 +377,7 @@ public abstract class Move {
         @Override
         public Board execute() {
 
-            final Board.Builder builder = new Board.Builder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), null)
+            final BoardBuilder builder = new BoardBuilder(super.getBoard().getMoveCount() + 1, super.getBoard().getCurrentPlayer().getOpponent().getLeague(), null)
                     .updateWhiteTimer(super.getBoard().getWhitePlayer().getMinute(), super.getBoard().getWhitePlayer().getSecond(), super.getBoard().getWhitePlayer().getMillisecond())
                     .updateBlackTimer(super.getBoard().getBlackPlayer().getMinute(), super.getBoard().getBlackPlayer().getSecond(), super.getBoard().getBlackPlayer().getMillisecond());
 

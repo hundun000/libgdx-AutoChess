@@ -31,7 +31,7 @@ public final class Board {
 
     private final Move transitionMove;
 
-    private Board(final Builder builder) {
+    private Board(final BoardBuilder builder) {
         this.gameBoard = createGameBoard(builder);
         this.whitePieces = calculateActivePieces(builder, League.WHITE);
         this.blackPieces = calculateActivePieces(builder, League.BLACK);
@@ -54,17 +54,17 @@ public final class Board {
         });
     }
 
-    private static ImmutableList<Piece> calculateActivePieces(final Builder builder, final League league) {
+    private static ImmutableList<Piece> calculateActivePieces(final BoardBuilder builder, final League league) {
         return ImmutableList.copyOf(builder.boardConfig.values().parallelStream().filter(piece -> piece.getLeague() == league).collect(Collectors.toList()));
     }
 
-    public static ImmutableList<Tile> createGameBoard(final Builder builder) {
+    public static ImmutableList<Tile> createGameBoard(final BoardBuilder builder) {
         return ImmutableList.copyOf(getBoardNumStream().map(i -> Tile.createTile(i, builder.boardConfig.get(i))).collect(Collectors.toList()));
     }
 
     public static Board createStandardBoardForMoveHistory(final String[] whiteTimer, final String[] blackTimer) {
         //white to move
-        final Builder builder = new Builder(0, League.WHITE, null)
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null)
                 .updateWhiteTimer(Integer.parseInt(whiteTimer[0]), Integer.parseInt(whiteTimer[1]), Integer.parseInt(whiteTimer[2]))
                 .updateBlackTimer(Integer.parseInt(blackTimer[0]), Integer.parseInt(blackTimer[1]), Integer.parseInt(blackTimer[2]));
         // Black Layout
@@ -101,7 +101,7 @@ public final class Board {
 
     public static Board createStandardBoard(final int minute, final int second, final int millisecond) {
         //white to move
-        final Builder builder = new Builder(0, League.WHITE, null)
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null)
                 .updateWhiteTimer(minute, second, millisecond)
                 .updateBlackTimer(minute, second, millisecond);
         // Black Layout
@@ -144,7 +144,7 @@ public final class Board {
         return this.gameBoard.get(tileCoordinate);
     }
 
-    public static final class Builder {
+    public static final class BoardBuilder {
 
         private final HashMap<Integer, Piece> boardConfig;
         private final League nextMoveMaker;
@@ -155,7 +155,7 @@ public final class Board {
         @Setter
         private Move transitionMove;
 
-        public Builder(final int moveCount, final League nextMoveMaker, final Pawn enPassantPawn) {
+        public BoardBuilder(final int moveCount, final League nextMoveMaker, final Pawn enPassantPawn) {
             //set initialCapacity to 32 and loadFactor to 1 to reduce chance of hash collision
             this.boardConfig = new HashMap<>(32, 1);
             this.nextMoveMaker = nextMoveMaker;
@@ -169,7 +169,7 @@ public final class Board {
             this.blackMinute = BoardUtils.DEFAULT_TIMER_MINUTE;
         }
 
-        public Builder setPiece(final Piece piece) {
+        public BoardBuilder setPiece(final Piece piece) {
             this.boardConfig.put(piece.getPiecePosition(), piece);
             return this;
         }
@@ -182,14 +182,14 @@ public final class Board {
             return this.moveCount;
         }
 
-        public Builder updateWhiteTimer(final int whiteMinute, final int whiteSecond, final int whiteMillisecond) {
+        public BoardBuilder updateWhiteTimer(final int whiteMinute, final int whiteSecond, final int whiteMillisecond) {
             this.whiteMinute = whiteMinute;
             this.whiteSecond = whiteSecond;
             this.whiteMillisecond = whiteMillisecond;
             return this;
         }
 
-        public Builder updateBlackTimer(final int blackMinute, final int blackSecond, final int blackMillisecond) {
+        public BoardBuilder updateBlackTimer(final int blackMinute, final int blackSecond, final int blackMillisecond) {
             this.blackMinute = blackMinute;
             this.blackSecond = blackSecond;
             this.blackMillisecond = blackMillisecond;

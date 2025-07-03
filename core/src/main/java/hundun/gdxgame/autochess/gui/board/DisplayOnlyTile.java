@@ -23,33 +23,33 @@ public final class DisplayOnlyTile extends Image {
         return this.tileID % 2 != 0 ? TILE_COLOR.LIGHT_TILE() : TILE_COLOR.DARK_TILE();
     }
 
-    private Color getHumanMoveColor(final GameBoardTable gameBoardTable, final DisplayOnlyBoard displayOnlyBoard) {
+    private Color getHumanMoveColor(final GameBoardTable gameBoardTable, final BoardLayerTable boardLayerTable) {
         if (this.tileID == gameBoardTable.getHumanMove().getCurrentCoordinate()) {
             return GuiUtils.HUMAN_PREVIOUS_TILE;
         } else if (this.tileID == gameBoardTable.getHumanMove().getDestinationCoordinate()) {
             return GuiUtils.HUMAN_CURRENT_TILE;
         }
-        return this.getTileColor(displayOnlyBoard.getTileColor());
+        return this.getTileColor(boardLayerTable.getTileColor());
     }
 
-    private Color getAIMoveColor(final GameBoardTable gameBoardTable, final DisplayOnlyBoard displayOnlyBoard) {
+    private Color getAIMoveColor(final GameBoardTable gameBoardTable, final BoardLayerTable boardLayerTable) {
         if (this.tileID == gameBoardTable.getAiMove().getCurrentCoordinate()) {
             return GuiUtils.AI_PREVIOUS_TILE;
         } else if (this.tileID == gameBoardTable.getAiMove().getDestinationCoordinate()) {
             return GuiUtils.AI_CURRENT_TILE;
         }
-        return this.getTileColor(displayOnlyBoard.getTileColor());
+        return this.getTileColor(boardLayerTable.getTileColor());
     }
 
-    public void repaint(final GameBoardTable gameBoardTable, final Board chessBoard, final DisplayOnlyBoard displayOnlyBoard) {
+    public void repaint(final GameBoardTable gameBoardTable, final Board chessBoard, final BoardLayerTable boardLayerTable) {
         if (chessBoard.getCurrentPlayer().isInCheck() && chessBoard.getCurrentPlayer().getPlayerKing().getPiecePosition() == this.tileID) {
             this.setColor(Color.RED);
         } else if (gameBoardTable.getHumanMove() != null && gameBoardTable.isHighlightPreviousMove()) {
-            this.setColor(this.getHumanMoveColor(gameBoardTable, displayOnlyBoard));
+            this.setColor(this.getHumanMoveColor(gameBoardTable, boardLayerTable));
         } else if (gameBoardTable.getAiMove() != null && gameBoardTable.isHighlightPreviousMove()) {
-            this.setColor(this.getAIMoveColor(gameBoardTable, displayOnlyBoard));
+            this.setColor(this.getAIMoveColor(gameBoardTable, boardLayerTable));
         } else {
-            this.setColor(this.getTileColor(displayOnlyBoard.getTileColor()));
+            this.setColor(this.getTileColor(boardLayerTable.getTileColor()));
         }
     }
 }
