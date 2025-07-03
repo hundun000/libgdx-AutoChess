@@ -74,7 +74,8 @@ public final class AutoChessGame extends BaseHundunGame<Void> {
     }
 
     @Override
-    protected void onLogicFrame(ILogicFrameListener iLogicFrameListener) {
+    protected void onLogicFrameSource(ILogicFrameListener iLogicFrameListener) {
         iLogicFrameListener.onLogicFrame();
     }
+
 }

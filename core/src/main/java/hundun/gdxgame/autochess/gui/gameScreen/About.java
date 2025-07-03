@@ -26,8 +26,8 @@ public final class About extends BaseAutoChessScreen {
     }
 
     @Override
-    protected void lazyInitUiRootContext() {
-        super.lazyInitUiRootContext();
+    protected void create() {
+        super.create();
 
         final Table table = new Table(GuiUtils.UI_SKIN);
         table.add("About Game").padBottom(20).row();
@@ -38,6 +38,7 @@ public final class About extends BaseAutoChessScreen {
 
         uiRootTable.add(table);
     }
+
 
     private TextButton backButton(final AutoChessGame chessGame) {
         final TextButton textButton = new TextButton("Back to Menu", GuiUtils.UI_SKIN);
@@ -61,9 +62,9 @@ public final class About extends BaseAutoChessScreen {
     protected void belowUiStageDraw(float delta) {
         super.belowUiStageDraw(delta);
 
-        this.backUiStage.getBatch().begin();
-        this.backUiStage.getBatch().draw(GuiUtils.BACKGROUND, 0, 0);
-        this.backUiStage.getBatch().end();
+        this.uiStage.getBatch().begin();
+        this.uiStage.getBatch().draw(GuiUtils.BACKGROUND, 0, 0);
+        this.uiStage.getBatch().end();
     }
 
 }

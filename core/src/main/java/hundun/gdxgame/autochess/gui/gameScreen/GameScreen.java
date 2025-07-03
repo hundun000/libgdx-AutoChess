@@ -77,8 +77,8 @@ public final class GameScreen extends BaseAutoChessScreen {
     }
 
     @Override
-    protected void lazyInitUiRootContext() {
-        super.lazyInitUiRootContext();
+    protected void create() {
+        super.create();
 
         final VerticalGroup verticalGroup = new VerticalGroup();
 
@@ -93,7 +93,6 @@ public final class GameScreen extends BaseAutoChessScreen {
         verticalGroup.addActor(horizontalGroup);
 
         this.uiRootTable.addActor(verticalGroup);
-
     }
 
     private Stack initGameBoard() {
@@ -114,19 +113,15 @@ public final class GameScreen extends BaseAutoChessScreen {
     }
 
 
-
     @Override
-    public void render(float delta) {
-
-
-
-        super.render(delta);
+    protected void beforeUiStageAct(float delta) {
+        super.beforeUiStageAct(delta);
+        this.gameMenu.detectKeyPressed(this);
+        this.gamePreference.detectUndoMoveKeyPressed(this);
     }
 
     @Override
     public void onLogicFrame() {
-        this.gameMenu.detectKeyPressed(this);
-        this.gamePreference.detectUndoMoveKeyPressed(this);
         if (this.getGameBoardTable().getArtificialIntelligenceWorking()) {
             this.getGameBoardTable().getArtificialIntelligence().getProgressBar().setValue(this.getGameBoardTable().getArtificialIntelligence().getMoveCount());
         } else if (!gameBoardTable.autoWaitingPieces.isEmpty()) {
@@ -136,6 +131,6 @@ public final class GameScreen extends BaseAutoChessScreen {
 
 
     public Stage getPopupUiStage() {
-        return popupUiStage;
+        return uiStage;
     }
 }

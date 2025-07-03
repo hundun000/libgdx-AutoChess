@@ -13,7 +13,7 @@ public abstract class BaseAutoChessScreen extends BaseHundunScreen<AutoChessGame
     }
 
     protected Table uiRootTable;
-    protected Table popupRootTable;
+
     @Override
     protected void baseInit(ScreenArg arg) {
         super.baseInit(arg);
@@ -22,31 +22,8 @@ public abstract class BaseAutoChessScreen extends BaseHundunScreen<AutoChessGame
         uiRootTable.setFillParent(true);
         uiStage.addActor(uiRootTable);
 
-        popupRootTable = new Table();
-        popupRootTable.setFillParent(true);
-        popupUiStage.addActor(popupRootTable);
     }
 
-    @Override
-    protected void create() {
-
-        lazyInitBackUiAndPopupUiContent();
-
-        lazyInitUiRootContext();
-
-        lazyInitLogicContext();
-
-    }
-
-    protected void lazyInitLogicContext() {
-
-    }
-    protected void lazyInitUiRootContext() {
-
-    }
-    protected void lazyInitBackUiAndPopupUiContent() {
-
-    }
 
     @Override
     public void show() {

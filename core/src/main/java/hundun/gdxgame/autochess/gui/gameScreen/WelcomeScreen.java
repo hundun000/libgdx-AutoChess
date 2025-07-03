@@ -21,8 +21,8 @@ public final class WelcomeScreen extends BaseAutoChessScreen {
     }
 
     @Override
-    protected void lazyInitUiRootContext() {
-        super.lazyInitUiRootContext();
+    protected void create() {
+        super.create();
 
         final Table table = new Table(GuiUtils.UI_SKIN);
 
@@ -39,6 +39,7 @@ public final class WelcomeScreen extends BaseAutoChessScreen {
 
         this.uiRootTable.addActor(table);
     }
+
 
     private TextButton startGameButton(final AutoChessGame chessGame) {
         final TextButton textButton = new TextButton("Start Game", GuiUtils.UI_SKIN);
@@ -84,7 +85,7 @@ public final class WelcomeScreen extends BaseAutoChessScreen {
                 } catch (final RuntimeException e) {
                     final Label label = new Label("No game to load", GuiUtils.UI_SKIN);
                     label.setColor(Color.BLACK);
-                    new Dialog("Load Game", GuiUtils.UI_SKIN).text(label).button("Ok").show(popupUiStage);
+                    new Dialog("Load Game", GuiUtils.UI_SKIN).text(label).button("Ok").show(uiStage);
                 }
             }
         });
@@ -96,9 +97,9 @@ public final class WelcomeScreen extends BaseAutoChessScreen {
     protected void belowUiStageDraw(float delta) {
         super.belowUiStageDraw(delta);
 
-        this.backUiStage.getBatch().begin();
-        this.backUiStage.getBatch().draw(GuiUtils.BACKGROUND, 0, 0);
-        this.backUiStage.getBatch().end();
+        this.uiStage.getBatch().begin();
+        this.uiStage.getBatch().draw(GuiUtils.BACKGROUND, 0, 0);
+        this.uiStage.getBatch().end();
     }
 
 
