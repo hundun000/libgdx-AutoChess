@@ -103,7 +103,7 @@ public final class GameProps {
 
             @Override
             protected IntStream getRebuildGameBoardTableIteration() {
-                return IntStream.iterate(0, n -> n + 1).limit(BoardUtils.NUM_TILES - 1);
+                return IntStream.iterate(0, n -> n + 1).limit(BoardUtils.NUM_TILES);
             }
 
             @Override
@@ -115,12 +115,17 @@ public final class GameProps {
             public boolean flipped() {
                 return false;
             }
+
+            @Override
+            public boolean rebuildGameBoardTableRowAtStart() {
+                return true;
+            }
         },
         FLIP_BOARD {
 
             @Override
             protected IntStream getRebuildGameBoardTableIteration() {
-                return IntStream.iterate(BoardUtils.NUM_TILES - 1, n -> n - 1).limit(BoardUtils.NUM_TILES - 1);
+                return IntStream.iterate(BoardUtils.NUM_TILES - 1, n -> n - 1).limit(BoardUtils.NUM_TILES);
             }
 
             @Override
@@ -132,25 +137,38 @@ public final class GameProps {
             public boolean flipped() {
                 return true;
             }
+
+            @Override
+            public boolean rebuildGameBoardTableRowAtStart() {
+                return false;
+            }
         };
 
         public abstract BoardDirectionStrategy opposite();
 
         public abstract boolean flipped();
-
+        public abstract boolean rebuildGameBoardTableRowAtStart();
         public void rebuildGameBoardTable(final GameScreen gameScreen, final GameBoardTable chessLayerTable, final Board chessBoard, final BoardLayerTable boardLayerTable) {
             chessLayerTable.clearChildren();
             boardLayerTable.clearChildren();
             IntStream iteration = getRebuildGameBoardTableIteration();
 
             iteration.forEachOrdered(i -> {
+                if (rebuildGameBoardTableRowAtStart()) {
+                    if (i % 8 == 0) {
+                        chessLayerTable.row();
+                        boardLayerTable.row();
+                    }
+                }
                 chessLayerTable.add(new TileActor(gameScreen, chessLayerTable.textureRegion(chessBoard, i), i)).size(GuiUtils.TILE_SIZE);
                 final DisplayOnlyTile tile = new DisplayOnlyTile(i);
                 tile.repaint(chessLayerTable, chessBoard, gameScreen.getBoardLayerTable());
                 boardLayerTable.add(tile).size(GuiUtils.TILE_SIZE);
-                if (i % 8 == 0) {
-                    chessLayerTable.row();
-                    boardLayerTable.row();
+                if (!rebuildGameBoardTableRowAtStart()) {
+                    if (i % 8 == 0) {
+                        chessLayerTable.row();
+                        boardLayerTable.row();
+                    }
                 }
             });
 
