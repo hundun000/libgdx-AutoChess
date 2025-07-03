@@ -1,5 +1,6 @@
 package hundun.gdxgame.autochess.engine.player;
 
+import com.badlogic.gdx.utils.Null;
 import com.google.common.collect.ImmutableList;
 import hundun.gdxgame.autochess.engine.League;
 import hundun.gdxgame.autochess.engine.board.*;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 public abstract class Player {
 
     private final Board board;
+    @Null
     private final King playerKing;
     private final ImmutableList<Move> legalMoves;
     private final boolean isInCheck;
@@ -21,7 +23,7 @@ public abstract class Player {
     public Player(final Board board, final ImmutableList<Move> legalMoves, final ImmutableList<Move> opponentLegalMoves, final int minute, final int second, final int millisecond) {
         this.board = board;
         this.playerKing = this.establishKing();
-        this.isInCheck = !Player.calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentLegalMoves).isEmpty();
+        this.isInCheck = this.playerKing != null && !Player.calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentLegalMoves).isEmpty();
         this.legalMoves = ImmutableList.<Move>builder().addAll(legalMoves).addAll(calculateKingCastles(opponentLegalMoves)).build();
         this.minute = minute;
         this.second = second;
@@ -58,7 +60,7 @@ public abstract class Player {
     }
 
     private King establishKing() {
-        return ((King)this.getActivePieces().parallelStream().filter(piece -> piece.getPieceType().isKing()).findFirst().orElseThrow(() -> new IllegalStateException("Invalid board")));
+        return ((King)this.getActivePieces().parallelStream().filter(piece -> piece.getPieceType().isKing()).findFirst().orElse(null));
     }
 
     public abstract ImmutableList<Piece> getActivePieces();
@@ -94,7 +96,7 @@ public abstract class Player {
     public abstract ImmutableList<Move> calculateKingCastles(final ImmutableList<Move> opponentLegals);
 
     public final boolean isCastled() {
-        return this.playerKing.isCastled();
+        return this.playerKing != null && this.playerKing.isCastled();
     }
 
     public final boolean isKingSideCastleCapable() {

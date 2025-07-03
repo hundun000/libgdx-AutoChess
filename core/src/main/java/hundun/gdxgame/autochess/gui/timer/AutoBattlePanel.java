@@ -6,22 +6,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import hundun.gdxgame.autochess.gui.GuiUtils;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
+import lombok.Getter;
 
 public final class AutoBattlePanel extends Table {
 
     public static final int SIZE = GuiUtils.GAME_BOARD_SR_SIZE / 2;
 
     GameScreen gameScreen;
-
+    @Getter
+    TextButton button;
     public AutoBattlePanel(GameScreen gameScreen) {
         this.setVisible(true);
         this.gameScreen = gameScreen;
-        TextButton button = new TextButton("Next turn", GuiUtils.UI_SKIN);
+        this.button = new TextButton("start", GuiUtils.UI_SKIN);
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                gameScreen.getGameBoardTable().startAutoTurn();
+                gameScreen.autoNextStep();
             }
         });
         this.add(button).size(SIZE).row();

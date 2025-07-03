@@ -5,15 +5,19 @@ import hundun.gdxgame.autochess.engine.League;
 import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.Move;
 import hundun.gdxgame.autochess.engine.board.MoveTransition;
+import lombok.Getter;
+import lombok.Setter;
 
 import static hundun.gdxgame.autochess.engine.board.Move.MajorMove;
 
+@Getter
+@Setter
 public abstract class Piece {
 
     public int id;
 
     private final PieceType pieceType;
-    private final int piecePosition;
+    private int piecePosition;
     private final League league;
     private final int hashCode;
     private final boolean isFirstMove;
@@ -72,21 +76,7 @@ public abstract class Piece {
             return true;
         }
     }
-
     public abstract Piece movedPiece(final Move move);
-
-    public final League getLeague() {
-        return this.league;
-    }
-
-    public final int getPiecePosition() {
-        return this.piecePosition;
-    }
-
-    public final PieceType getPieceType() {
-        return this.pieceType;
-    }
-
     public final int getPieceValue() {
         return this.pieceType.getPieceValue();
     }

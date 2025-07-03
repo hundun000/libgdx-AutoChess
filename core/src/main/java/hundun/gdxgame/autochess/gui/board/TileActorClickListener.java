@@ -51,9 +51,9 @@ public class TileActorClickListener extends ClickListener {
                             gameScreen.getMoveHistoryBoard().getMoveLog().addMove(move);
                             gameScreen.getMoveHistoryBoard().updateMoveHistory();
                             if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
-                                gameScreen.getGameBoardTable().afterMove(move);
+                                gameScreen.afterMove(move);
                             } else {
-                                gameScreen.getGameBoardTable().displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
+                                gameScreen.getGameBoardTable().checkEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
                             }
                         }
                     } else {

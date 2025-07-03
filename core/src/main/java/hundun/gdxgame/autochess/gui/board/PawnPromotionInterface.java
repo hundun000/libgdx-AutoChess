@@ -63,9 +63,9 @@ public final class PawnPromotionInterface {
                     gameScreen.getMoveHistoryBoard().getMoveLog().addMove(pawnPromotion);
                     gameScreen.getMoveHistoryBoard().updateMoveHistory();
                     if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
-                        gameScreen.getGameBoardTable().afterMove(pawnPromotion);
+                        gameScreen.afterMove(pawnPromotion);
                     } else {
-                        gameScreen.getGameBoardTable().displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
+                        gameScreen.getGameBoardTable().checkEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
                     }
                 }
             });

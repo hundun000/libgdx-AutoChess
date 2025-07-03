@@ -14,6 +14,7 @@ import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
 import hundun.gdxgame.autochess.engine.board.BoardUtils;
 import hundun.gdxgame.autochess.AutoChessGame;
+import hundun.gdxgame.autochess.engine.board.Move;
 import hundun.gdxgame.autochess.engine.pieces.King;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.engine.pieces.Rook;
@@ -23,7 +24,6 @@ import hundun.gdxgame.autochess.gui.GuiUtils;
 import hundun.gdxgame.autochess.gui.board.BoardLayerTable;
 import hundun.gdxgame.autochess.gui.board.GameBoardTable;
 import hundun.gdxgame.autochess.gui.board.GameProps.GameEnd;
-import hundun.gdxgame.autochess.gui.board.TileActor;
 import hundun.gdxgame.autochess.gui.gameMenu.AIButton;
 import hundun.gdxgame.autochess.gui.gameMenu.GameMenu;
 import hundun.gdxgame.autochess.gui.gameMenu.GameOption;
@@ -32,7 +32,12 @@ import hundun.gdxgame.autochess.gui.moveHistory.MoveHistoryBoard;
 import hundun.gdxgame.autochess.gui.timer.AutoBattlePanel;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public final class GameScreen extends BaseAutoChessScreen {
 
@@ -86,8 +91,8 @@ public final class GameScreen extends BaseAutoChessScreen {
         static GameEmeryWave TEST = GameEmeryWave.builder()
             .statHp(100)
             .pieces(List.of(
-                new King(League.BLACK, 4, false, false),
-                new Rook(League.BLACK, 24)
+                new King(League.BLACK, -1, false, false),
+                new Rook(League.BLACK, -1)
             ))
             .build();
 
@@ -102,8 +107,8 @@ public final class GameScreen extends BaseAutoChessScreen {
     public static class PlayerDesk {
         static PlayerDesk TEST = PlayerDesk.builder()
             .pieces(List.of(
-                new King(League.WHITE, 5, false, false),
-                new Rook(League.WHITE, 25)
+                new King(League.WHITE, -1, false, false),
+                new Rook(League.WHITE, -1)
             ))
             .build();
 
@@ -112,37 +117,9 @@ public final class GameScreen extends BaseAutoChessScreen {
     public void newGame(final Board ignored, BOARD_STATE board_state) {
 
         this.ashleyEngine = new Engine();
-        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
-        GameEmeryWave gameEmeryWave = GameEmeryWave.TEST;
-        gameEmeryWave.pieces.forEach(it -> {
-            builder.setPiece(it);
-        });
-        PlayerDesk playerDesk = PlayerDesk.TEST;
-        playerDesk.pieces.forEach(it -> {
-            builder.setPiece(it);
-        });
-        this.chessBoard = builder.build();
 
 
-        gameEmeryWave.pieces.forEach(it -> {
-            Entity hero = new Entity();
 
-            hero.add(
-                HealthComponent.builder()
-                    .hp(gameEmeryWave.getStatHp())
-                    .build()
-            );
-
-            hero.add(
-                ChessEngineComponent.builder()
-                    .piece(it)
-                    .board(this.chessBoard)
-                    .build()
-            );
-
-            ashleyEngine.addEntity(hero);
-            builder.setPiece(it);
-        });
 
 
         if (board_state == GameScreen.BOARD_STATE.NEW_GAME) {
@@ -152,14 +129,14 @@ public final class GameScreen extends BaseAutoChessScreen {
         this.getGameBoardTable().updateHumanMove(null);
         this.getMoveHistoryBoard().updateMoveHistory();
         this.getGameBoardTable().updateGameEnd(GameEnd.ONGOING);
-        this.getGameBoardTable().rebuildGameBoardTable(this, this.getChessBoard(), this.getBoardLayerTable());
+        this.step = AutoStep.WAIT_NEW_POS;
     }
 
 
     public GameScreen(final AutoChessGame chessGame) {
         super(chessGame);
         //init
-        this.chessBoard = Board.createStandardBoard(BoardUtils.DEFAULT_TIMER_MINUTE, BoardUtils.DEFAULT_TIMER_SECOND, BoardUtils.DEFAULT_TIMER_MILLISECOND);
+        this.chessBoard = Board.createEmptyBoard();
         this.moveHistoryBoard = new MoveHistoryBoard();
         this.gameBoardTable = new GameBoardTable(this);
         this.boardLayerTable = new BoardLayerTable();
@@ -171,6 +148,72 @@ public final class GameScreen extends BaseAutoChessScreen {
         Gdx.graphics.setTitle("LibGDX Simple Parallel Chess 2.0");
 
 
+    }
+
+    @Getter
+    private List<Piece> autoWaitingPieces = new ArrayList<>();
+    @Getter
+    AutoStep step;
+    public enum AutoStep {
+        WAIT_NEW_POS,
+        WAIT_ATTACK
+
+    }
+
+    public void autoNextStep() {
+        switch (step) {
+            case WAIT_NEW_POS:
+            {
+                List<Integer> emptyPos = IntStream.iterate(0, n -> n + 1).limit(BoardUtils.NUM_TILES)
+                    .boxed()
+                    .collect(Collectors.toCollection( ArrayList :: new ));
+                Collections.shuffle(emptyPos);
+                final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null);
+                GameEmeryWave gameEmeryWave = GameEmeryWave.TEST;
+                gameEmeryWave.pieces.forEach(it -> {
+                    int pos = emptyPos.remove(0);
+                    it.setPiecePosition(pos);
+                    builder.setPiece(it);
+                });
+                PlayerDesk playerDesk = PlayerDesk.TEST;
+                playerDesk.pieces.forEach(it -> {
+                    int pos = emptyPos.remove(0);
+                    it.setPiecePosition(pos);
+                    builder.setPiece(it);
+                });
+                this.chessBoard = builder.build();
+
+                this.getGameBoardTable().rebuildGameBoardTable(this, this.getChessBoard(), this.getBoardLayerTable());
+
+                step = AutoStep.WAIT_ATTACK;
+                gameAutoBattlePanel.getButton().setText("Attack");
+            }
+            break;
+            case WAIT_ATTACK:
+            {
+                autoWaitingPieces.clear();
+                autoWaitingPieces.addAll(
+                    this.getChessBoard().getAllPieces().stream()
+                        .collect(Collectors.toList())
+                );
+                Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieces size: " + autoWaitingPieces.size());
+                step = AutoStep.WAIT_NEW_POS;
+                gameAutoBattlePanel.getButton().setText("NextTurn");
+            }
+            break;
+        }
+    }
+
+    public void afterMove(Move move) {
+        if (move.equals(Move.MoveFactory.getNullMove())) {
+            Gdx.app.log(this.getClass().getSimpleName(), "afterMove: NullMove");
+            autoWaitingPieces.clear();
+        } else {
+            Gdx.app.log(this.getClass().getSimpleName(), "afterMove: " + move);
+            autoWaitingPieces.removeIf(it -> !this.getChessBoard().getAllPieces().contains(it) || it == move.getMovedPiece());
+            Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieceIds size = " + autoWaitingPieces.size());
+        }
+        gameBoardTable.checkEndGameMessage(this.getChessBoard(), this.getPopupUiStage());
     }
 
     @Override
@@ -221,8 +264,8 @@ public final class GameScreen extends BaseAutoChessScreen {
     public void onLogicFrame() {
         if (this.getGameBoardTable().getArtificialIntelligenceWorking()) {
             this.getGameBoardTable().getArtificialIntelligence().getProgressBar().setValue(this.getGameBoardTable().getArtificialIntelligence().getMoveCount());
-        } else if (!gameBoardTable.autoWaitingPieces.isEmpty()) {
-            gameBoardTable.nextAutoPiece();
+        } else if (!this.autoWaitingPieces.isEmpty()) {
+            gameBoardTable.nextAutoPieceMove();
         }
     }
 

@@ -73,7 +73,7 @@ public final class BlackPlayer extends Player {
 
     @Override
     public ImmutableList<Move> calculateKingCastles(final ImmutableList<Move> opponentLegals) {
-        return !this.isCastled() && super.getPlayerKing().isFirstMove() && !this.isInCheck() ? ImmutableList.copyOf(Arrays.asList(new Move[]{
+        return !this.isCastled() && super.getPlayerKing() != null && super.getPlayerKing().isFirstMove() && !this.isInCheck() ? ImmutableList.copyOf(Arrays.asList(new Move[]{
                 this.getKingSideCastleMove(opponentLegals), this.getQueenSideCastleMove(opponentLegals)
         }).parallelStream().filter(Objects::nonNull).collect(Collectors.toList())) : ImmutableList.of();
     }

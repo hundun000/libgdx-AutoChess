@@ -20,10 +20,6 @@ import hundun.gdxgame.autochess.gui.board.GameProps.BoardDirectionStrategy;
 import hundun.gdxgame.autochess.gui.board.GameProps.PlayerType;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public final class GameBoardTable extends Table {
 
 
@@ -40,16 +36,7 @@ public final class GameBoardTable extends Table {
     public BoardDirectionStrategy boardDirectionStrategy;
     final GameScreen gameScreen;
 
-    public List<Piece> autoWaitingPieces = new ArrayList<>();
 
-    public void startAutoTurn() {
-        autoWaitingPieces.clear();
-        autoWaitingPieces.addAll(
-                gameScreen.getChessBoard().getAllPieces().stream()
-                        .collect(Collectors.toList())
-        );
-        Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieces size: " + autoWaitingPieces.size());
-    }
 
 
     public GameBoardTable(final GameScreen gameScreen) {
@@ -135,17 +122,7 @@ public final class GameBoardTable extends Table {
         return this.aiMove;
     }
 
-    public void afterMove(Move move) {
-        if (move.equals(Move.MoveFactory.getNullMove())) {
-            Gdx.app.log(this.getClass().getSimpleName(), "afterMove: NullMove");
-            autoWaitingPieces.clear();
-        } else {
-            Gdx.app.log(this.getClass().getSimpleName(), "afterMove: " + move);
-            autoWaitingPieces.removeIf(it -> !gameScreen.getChessBoard().getAllPieces().contains(it) || it == move.getMovedPiece());
-            Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieceIds size = " + autoWaitingPieces.size());
-        }
-        displayEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
-    }
+
 
     public boolean getArtificialIntelligenceWorking() {
         return this.artificialIntelligenceWorking.isArtificialIntelligenceWorking();
@@ -184,7 +161,7 @@ public final class GameBoardTable extends Table {
         }
     }
 
-    public void displayEndGameMessage(final Board chessBoard, final Stage stage) {
+    public void checkEndGameMessage(final Board chessBoard, final Stage stage) {
         final String state = chessBoard.getCurrentPlayer().isInCheckmate() ? "Checkmate" : chessBoard.getCurrentPlayer().isInStalemate() ? "Stalemate" : null;
         if (state == null) {
             return;
@@ -202,11 +179,11 @@ public final class GameBoardTable extends Table {
     AiFilter aiFilter = new AiFilter() {
         @Override
         public boolean filter(Move it) {
-            return autoWaitingPieces.contains(it.getMovedPiece());
+            return gameScreen.getAutoWaitingPieces().contains(it.getMovedPiece());
         }
     };
 
-    public void nextAutoPiece() {
+    public void nextAutoPieceMove() {
 
         if (isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
                 && !gameScreen.getChessBoard().getCurrentPlayer().isInCheckmate()

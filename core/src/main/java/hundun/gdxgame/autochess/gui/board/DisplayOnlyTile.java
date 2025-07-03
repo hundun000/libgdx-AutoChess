@@ -42,7 +42,7 @@ public final class DisplayOnlyTile extends Image {
     }
 
     public void repaint(final GameBoardTable gameBoardTable, final Board chessBoard, final BoardLayerTable boardLayerTable) {
-        if (chessBoard.getCurrentPlayer().isInCheck() && chessBoard.getCurrentPlayer().getPlayerKing().getPiecePosition() == this.tileID) {
+        if (chessBoard.getCurrentPlayer().getPlayerKing() != null && chessBoard.getCurrentPlayer().isInCheck() && chessBoard.getCurrentPlayer().getPlayerKing().getPiecePosition() == this.tileID) {
             this.setColor(Color.RED);
         } else if (gameBoardTable.getHumanMove() != null && gameBoardTable.isHighlightPreviousMove()) {
             this.setColor(this.getHumanMoveColor(gameBoardTable, boardLayerTable));

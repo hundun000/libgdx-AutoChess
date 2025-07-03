@@ -132,6 +132,15 @@ public final class Board {
         return builder.build();
     }
 
+    public static Board createEmptyBoard() {
+        //white to move
+        final BoardBuilder builder = new BoardBuilder(0, League.WHITE, null)
+            .updateWhiteTimer(0, 0, 0)
+            .updateBlackTimer(0, 0, 0);
+        //build the board
+        return builder.build();
+    }
+
     public ImmutableList<Piece> getAllPieces() {
         return new ImmutableList.Builder<Piece>().addAll(this.whitePieces).addAll(this.blackPieces).build();
     }
