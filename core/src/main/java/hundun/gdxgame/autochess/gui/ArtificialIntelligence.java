@@ -75,8 +75,8 @@ public final class ArtificialIntelligence {
         Executors.newSingleThreadExecutor().execute(() -> {
             this.miniMax = new MiniMax(this.level.getSelected());
             final Move bestMove = miniMax.execute(gameScreen.getChessBoard(), aiFilter);
-            gameScreen.getGameBoardTable().updateAiMove(bestMove);
-            gameScreen.getGameBoardTable().updateHumanMove(null);
+            gameScreen.getChessLayerTable().updateAiMove(bestMove);
+            gameScreen.getChessLayerTable().updateHumanMove(null);
             if (!bestMove.equals(Move.MoveFactory.getNullMove())) {
                 gameScreen.updateChessBoard(gameScreen.getChessBoard().getCurrentPlayer().makeMove(bestMove).getLatestBoard());
             }
@@ -86,7 +86,7 @@ public final class ArtificialIntelligence {
                     if (!bestMove.equals(Move.MoveFactory.getNullMove())) {
                         gameScreen.getMoveHistoryBoard().getMoveLog().addMove(bestMove);
                         gameScreen.getMoveHistoryBoard().updateMoveHistory();
-                        gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
+                        gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
                         gameScreen.afterMove(bestMove);
                     } else {
                         gameScreen.afterMove(bestMove);
@@ -95,7 +95,7 @@ public final class ArtificialIntelligence {
                 });
             }
             this.setStopAI(false);
-            gameScreen.getGameBoardTable().updateArtificialIntelligenceWorking(GameProps.ArtificialIntelligenceWorking.RESTING);
+            gameScreen.getChessLayerTable().updateArtificialIntelligenceWorking(GameProps.ArtificialIntelligenceWorking.RESTING);
         });
     }
 }

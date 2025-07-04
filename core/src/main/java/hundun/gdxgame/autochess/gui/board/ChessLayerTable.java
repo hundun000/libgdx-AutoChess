@@ -16,11 +16,10 @@ import hundun.gdxgame.autochess.engine.player.ArtificialIntelligence.MiniMax.AiF
 import hundun.gdxgame.autochess.engine.player.Player;
 import hundun.gdxgame.autochess.gui.ArtificialIntelligence;
 import hundun.gdxgame.autochess.gui.GuiUtils;
-import hundun.gdxgame.autochess.gui.board.GameProps.BoardDirectionStrategy;
 import hundun.gdxgame.autochess.gui.board.GameProps.PlayerType;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
 
-public final class GameBoardTable extends Table {
+public final class ChessLayerTable extends Table {
 
 
     private final ArtificialIntelligence artificialIntelligence;
@@ -39,7 +38,7 @@ public final class GameBoardTable extends Table {
 
 
 
-    public GameBoardTable(final GameScreen gameScreen) {
+    public ChessLayerTable(final GameScreen gameScreen) {
         //mutable
         this.gameScreen = gameScreen;
         this.humanPiece = null;
@@ -62,7 +61,7 @@ public final class GameBoardTable extends Table {
             if (i % 8 == 0) {
                 this.row();
             }
-            this.add(new TileActor(gameScreen, this.textureRegion(gameScreen.getChessBoard(), i), i)).size(GuiUtils.TILE_SIZE);
+            this.add(new ChessActor(gameScreen, this.textureRegion(gameScreen.getChessBoard(), i), i)).size(GuiUtils.TILE_SIZE);
         }
         this.validate();
     }
@@ -148,8 +147,8 @@ public final class GameBoardTable extends Table {
         return player.getLeague() == League.WHITE ? this.whitePlayerType == GameProps.PlayerType.COMPUTER : this.blackPlayerType == GameProps.PlayerType.COMPUTER;
     }
 
-    public void rebuildGameBoardTable(final GameScreen gameScreen, final Board chessBoard, final BoardLayerTable boardLayerTable) {
-        this.boardDirectionStrategy.rebuildGameBoardTable(gameScreen, this, chessBoard, boardLayerTable);
+    public void rebuildGameBoardTable(final GameScreen gameScreen, final Board chessBoard, final TileLayerTable tileLayerTable) {
+        this.boardDirectionStrategy.rebuildGameBoardTable(gameScreen, this, chessBoard, tileLayerTable);
     }
 
     public void displayTimeOutMessage(final Board chessBoard, final Stage stage) {

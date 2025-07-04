@@ -2,8 +2,8 @@ package hundun.gdxgame.autochess;
 
 import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.gui.GuiUtils;
-import hundun.gdxgame.autochess.gui.board.GameProps.GameEnd;
 import hundun.gdxgame.autochess.gui.gameScreen.About;
+import hundun.gdxgame.autochess.gui.gameScreen.BOARD_STATE;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
 import hundun.gdxgame.autochess.gui.gameScreen.WelcomeScreen;
 import hundun.gdxgame.libv3.corelib.base.BaseHundunGame;
@@ -52,7 +52,7 @@ public final class AutoChessGame extends BaseHundunGame<Void> {
         return this.aboutScreen;
     }
 
-    public void gotoGameScreen(final GameScreen.BOARD_STATE board_state, final Board board) {
+    public void gotoGameScreen(final BOARD_STATE board_state, final Board board) {
         this.gameScreen.newGame(board, board_state);
 
         screenManager.pushScreen(this.gameScreen, null);

@@ -44,7 +44,7 @@ public final class AIButton extends TextButton {
             final Label label = new Label("Select Level", GuiUtils.UI_SKIN);
             label.setColor(Color.BLACK);
             this.getContentTable().add(label);
-            this.getContentTable().add(gameScreen.getGameBoardTable().getArtificialIntelligence().getLevelSelector()).row();
+            this.getContentTable().add(gameScreen.getChessLayerTable().getArtificialIntelligence().getLevelSelector()).row();
 
             this.getContentTable().add(new OKButton(gameScreen, this)).align(Align.left);
             this.getContentTable().add(new CancelButton(gameScreen, this)).align(Align.right);
@@ -58,10 +58,10 @@ public final class AIButton extends TextButton {
                     @Override
                     public void clicked(final InputEvent event, final float x, final float y) {
                         aiDialog.remove();
-                        gameScreen.getGameBoardTable().updateWhitePlayerType(GameProps.PlayerType.getPlayerType(aiDialog.whitePlayerCheckBox.isChecked()));
-                        gameScreen.getGameBoardTable().updateBlackPlayerType(GameProps.PlayerType.getPlayerType(aiDialog.blackPlayerCheckBox.isChecked()));
-                        if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
-                            gameScreen.getGameBoardTable().getArtificialIntelligence().setStopAI(true);
+                        gameScreen.getChessLayerTable().updateWhitePlayerType(GameProps.PlayerType.getPlayerType(aiDialog.whitePlayerCheckBox.isChecked()));
+                        gameScreen.getChessLayerTable().updateBlackPlayerType(GameProps.PlayerType.getPlayerType(aiDialog.blackPlayerCheckBox.isChecked()));
+                        if (!gameScreen.getChessLayerTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
+                            gameScreen.getChessLayerTable().getArtificialIntelligence().setStopAI(true);
                         }
                     }
                 });

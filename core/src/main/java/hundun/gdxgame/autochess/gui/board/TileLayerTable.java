@@ -11,20 +11,20 @@ import hundun.gdxgame.autochess.gui.GuiUtils;
 import lombok.Setter;
 
 @Setter
-public final class BoardLayerTable extends Table {
+public final class TileLayerTable extends Table {
 
     private GuiUtils.TILE_COLOR tileColor;
 
-    public BoardLayerTable() {
+    public TileLayerTable() {
         this.setFillParent(true);
         this.tileColor = GuiUtils.TILE_COLOR.CLASSIC;
         for (int i = 0; i < BoardUtils.NUM_TILES; i += 1) {
             if (i % 8 == 0) {
                 this.row();
             }
-            final DisplayOnlyTile displayOnlyTile = new DisplayOnlyTile(i);
-            displayOnlyTile.setColor(getTileColor(this.tileColor, i));
-            this.add(displayOnlyTile).size(GuiUtils.TILE_SIZE);
+            final TileActor tileActor = new TileActor(i);
+            tileActor.setColor(getTileColor(this.tileColor, i));
+            this.add(tileActor).size(GuiUtils.TILE_SIZE);
         }
         this.validate();
     }
@@ -47,11 +47,11 @@ public final class BoardLayerTable extends Table {
         return this.tileColor;
     }
 
-    public void highlightLegalMove(final GameBoardTable gameBoardTable, final Board chessBoard) {
-        final Piece piece = gameBoardTable.getHumanPiece();
+    public void highlightLegalMove(final ChessLayerTable chessLayerTable, final Board chessBoard) {
+        final Piece piece = chessLayerTable.getHumanPiece();
         final ImmutableList<Move> moveList = piece != null && piece.getLeague() == chessBoard.getCurrentPlayer().getLeague() ? ImmutableList.copyOf(piece.calculateLegalMoves(chessBoard)) : ImmutableList.of();
         for (final Move move : moveList) {
-            final int tileID = gameBoardTable.boardDirectionStrategy.flipped() ? 63 - move.getDestinationCoordinate() : move.getDestinationCoordinate();
+            final int tileID = chessLayerTable.boardDirectionStrategy.flipped() ? 63 - move.getDestinationCoordinate() : move.getDestinationCoordinate();
             if (move.isAttack() || move.isPromotionMove() && ((Move.PawnPromotion) move).getDecoratedMove().isAttack()) {
                 this.getChildren().get(tileID).setColor(new Color(204 / 255f, 0 / 255f, 0 / 255f, 1));
             } else {

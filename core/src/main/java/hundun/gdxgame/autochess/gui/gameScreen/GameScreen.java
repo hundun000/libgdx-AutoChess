@@ -1,14 +1,11 @@
 package hundun.gdxgame.autochess.gui.gameScreen;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import hundun.gdxgame.autochess.engine.FEN.FenUtilities;
 import hundun.gdxgame.autochess.engine.League;
 import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
@@ -18,23 +15,19 @@ import hundun.gdxgame.autochess.engine.board.Move;
 import hundun.gdxgame.autochess.engine.pieces.King;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.engine.pieces.Rook;
-import hundun.gdxgame.autochess.esc.ChessEngineComponent;
-import hundun.gdxgame.autochess.esc.HealthComponent;
-import hundun.gdxgame.autochess.gui.GuiUtils;
-import hundun.gdxgame.autochess.gui.board.BoardLayerTable;
-import hundun.gdxgame.autochess.gui.board.GameBoardTable;
+import hundun.gdxgame.autochess.gui.board.TileLayerTable;
+import hundun.gdxgame.autochess.gui.board.ChessLayerTable;
 import hundun.gdxgame.autochess.gui.board.GameProps.GameEnd;
 import hundun.gdxgame.autochess.gui.gameMenu.AIButton;
 import hundun.gdxgame.autochess.gui.gameMenu.GameMenu;
 import hundun.gdxgame.autochess.gui.gameMenu.GameOption;
 import hundun.gdxgame.autochess.gui.gameMenu.GamePreference;
 import hundun.gdxgame.autochess.gui.moveHistory.MoveHistoryBoard;
-import hundun.gdxgame.autochess.gui.timer.AutoBattlePanel;
+import hundun.gdxgame.autochess.gui.timer.AutoBattleControlPanel;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -44,34 +37,17 @@ public final class GameScreen extends BaseAutoChessScreen {
     @Getter
     private Board chessBoard;
     @Getter
-    private final GameBoardTable gameBoardTable;
+    private final ChessLayerTable chessLayerTable;
     @Getter
-    private final BoardLayerTable boardLayerTable;
+    private final TileLayerTable tileLayerTable;
     @Getter
     private final MoveHistoryBoard moveHistoryBoard;
     @Getter
-    private final AutoBattlePanel gameAutoBattlePanel;
+    private final AutoBattleControlPanel gameAutoBattleControlPanel;
 
     private final GameMenu gameMenu;
     private final GamePreference gamePreference;
 
-    Engine ashleyEngine = new Engine();
-
-    public enum BOARD_STATE {
-        NEW_GAME {
-            @Override
-            public Board getBoard(final GameScreen gameScreen) {
-                return Board.createStandardBoard(BoardUtils.DEFAULT_TIMER_MINUTE, BoardUtils.DEFAULT_TIMER_SECOND, BoardUtils.DEFAULT_TIMER_MILLISECOND);
-            }
-        }, LOAD_GAME {
-            @Override
-            public Board getBoard(final GameScreen gameScreen) {
-                return FenUtilities.createGameFromSavedData(GuiUtils.MOVE_LOG_PREF.getString(GuiUtils.MOVE_LOG_STATE), gameScreen.getMoveHistoryBoard().getMoveLog());
-            }
-        };
-
-        public abstract Board getBoard(final GameScreen gameScreen);
-    }
 
     //setter
     public void updateChessBoard(final Board board) {
@@ -116,19 +92,14 @@ public final class GameScreen extends BaseAutoChessScreen {
     }
     public void newGame(final Board ignored, BOARD_STATE board_state) {
 
-        this.ashleyEngine = new Engine();
 
-
-
-
-
-        if (board_state == GameScreen.BOARD_STATE.NEW_GAME) {
+        if (board_state == BOARD_STATE.NEW_GAME) {
             this.getMoveHistoryBoard().getMoveLog().clear();
         }
-        this.getGameBoardTable().updateAiMove(null);
-        this.getGameBoardTable().updateHumanMove(null);
+        this.getChessLayerTable().updateAiMove(null);
+        this.getChessLayerTable().updateHumanMove(null);
         this.getMoveHistoryBoard().updateMoveHistory();
-        this.getGameBoardTable().updateGameEnd(GameEnd.ONGOING);
+        this.getChessLayerTable().updateGameEnd(GameEnd.ONGOING);
         this.step = AutoStep.WAIT_NEW_POS;
     }
 
@@ -138,9 +109,9 @@ public final class GameScreen extends BaseAutoChessScreen {
         //init
         this.chessBoard = Board.createEmptyBoard();
         this.moveHistoryBoard = new MoveHistoryBoard();
-        this.gameBoardTable = new GameBoardTable(this);
-        this.boardLayerTable = new BoardLayerTable();
-        this.gameAutoBattlePanel = new AutoBattlePanel(this);
+        this.chessLayerTable = new ChessLayerTable(this);
+        this.tileLayerTable = new TileLayerTable();
+        this.gameAutoBattleControlPanel = new AutoBattleControlPanel(this);
 
         this.gameMenu = new GameMenu(chessGame, this);
         this.gamePreference = new GamePreference(this);
@@ -183,10 +154,10 @@ public final class GameScreen extends BaseAutoChessScreen {
                 });
                 this.chessBoard = builder.build();
 
-                this.getGameBoardTable().rebuildGameBoardTable(this, this.getChessBoard(), this.getBoardLayerTable());
+                this.getChessLayerTable().rebuildGameBoardTable(this, this.getChessBoard(), this.getTileLayerTable());
 
                 step = AutoStep.WAIT_ATTACK;
-                gameAutoBattlePanel.getButton().setText("Attack");
+                gameAutoBattleControlPanel.getButton().setText("Attack");
             }
             break;
             case WAIT_ATTACK:
@@ -198,7 +169,7 @@ public final class GameScreen extends BaseAutoChessScreen {
                 );
                 Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieces size: " + autoWaitingPieces.size());
                 step = AutoStep.WAIT_NEW_POS;
-                gameAutoBattlePanel.getButton().setText("NextTurn");
+                gameAutoBattleControlPanel.getButton().setText("NextTurn");
             }
             break;
         }
@@ -213,7 +184,7 @@ public final class GameScreen extends BaseAutoChessScreen {
             autoWaitingPieces.removeIf(it -> !this.getChessBoard().getAllPieces().contains(it) || it == move.getMovedPiece());
             Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieceIds size = " + autoWaitingPieces.size());
         }
-        gameBoardTable.checkEndGameMessage(this.getChessBoard(), this.getPopupUiStage());
+        chessLayerTable.checkEndGameMessage(this.getChessBoard(), this.getPopupUiStage());
     }
 
     @Override
@@ -226,7 +197,7 @@ public final class GameScreen extends BaseAutoChessScreen {
 
         horizontalGroup.addActor(this.moveHistoryBoard);
         horizontalGroup.addActor(this.initGameBoard());
-        horizontalGroup.addActor(this.gameAutoBattlePanel);
+        horizontalGroup.addActor(this.gameAutoBattleControlPanel);
 
         verticalGroup.setFillParent(true);
         verticalGroup.addActor(this.initGameMenu());
@@ -237,8 +208,8 @@ public final class GameScreen extends BaseAutoChessScreen {
 
     private Stack initGameBoard() {
         final Stack stack = new Stack();
-        stack.add(this.boardLayerTable);
-        stack.add(this.gameBoardTable);
+        stack.add(this.tileLayerTable);
+        stack.add(this.chessLayerTable);
         return stack;
     }
 
@@ -262,10 +233,10 @@ public final class GameScreen extends BaseAutoChessScreen {
 
     @Override
     public void onLogicFrame() {
-        if (this.getGameBoardTable().getArtificialIntelligenceWorking()) {
-            this.getGameBoardTable().getArtificialIntelligence().getProgressBar().setValue(this.getGameBoardTable().getArtificialIntelligence().getMoveCount());
+        if (this.getChessLayerTable().getArtificialIntelligenceWorking()) {
+            this.getChessLayerTable().getArtificialIntelligence().getProgressBar().setValue(this.getChessLayerTable().getArtificialIntelligence().getMoveCount());
         } else if (!this.autoWaitingPieces.isEmpty()) {
-            gameBoardTable.nextAutoPieceMove();
+            chessLayerTable.nextAutoPieceMove();
         }
     }
 

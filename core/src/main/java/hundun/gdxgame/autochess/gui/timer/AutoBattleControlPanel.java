@@ -8,14 +8,14 @@ import hundun.gdxgame.autochess.gui.GuiUtils;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
 import lombok.Getter;
 
-public final class AutoBattlePanel extends Table {
+public final class AutoBattleControlPanel extends Table {
 
     public static final int SIZE = GuiUtils.GAME_BOARD_SR_SIZE / 2;
 
     GameScreen gameScreen;
     @Getter
     TextButton button;
-    public AutoBattlePanel(GameScreen gameScreen) {
+    public AutoBattleControlPanel(GameScreen gameScreen) {
         this.setVisible(true);
         this.gameScreen = gameScreen;
         this.button = new TextButton("start", GuiUtils.UI_SKIN);

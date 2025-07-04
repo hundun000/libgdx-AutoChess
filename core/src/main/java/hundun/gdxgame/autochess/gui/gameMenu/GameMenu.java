@@ -249,7 +249,7 @@ public final class GameMenu extends TextButton {
                         @Override
                         public void clicked(final InputEvent event, final float x, final float y) {
                             setupTimer.remove();
-                            gameScreen.getGameBoardTable().getArtificialIntelligence().setStopAI(true);
+                            gameScreen.getChessLayerTable().getArtificialIntelligence().setStopAI(true);
                             setupTimer.restartGame(gameScreen, setupTimer.minute);
                         }
                     });
@@ -259,11 +259,11 @@ public final class GameMenu extends TextButton {
             private void restartGame(final GameScreen gameScreen, final int minute) {
                 gameScreen.updateChessBoard(Board.createStandardBoard(minute, BoardUtils.DEFAULT_TIMER_SECOND, BoardUtils.DEFAULT_TIMER_MILLISECOND));
                 gameScreen.getMoveHistoryBoard().getMoveLog().clear();
-                gameScreen.getGameBoardTable().updateHumanPiece(null);
-                gameScreen.getGameBoardTable().updateAiMove(null);
-                gameScreen.getGameBoardTable().updateHumanMove(null);
-                gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
-                gameScreen.getGameBoardTable().updateGameEnd(GameProps.GameEnd.ONGOING);
+                gameScreen.getChessLayerTable().updateHumanPiece(null);
+                gameScreen.getChessLayerTable().updateAiMove(null);
+                gameScreen.getChessLayerTable().updateHumanMove(null);
+                gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
+                gameScreen.getChessLayerTable().updateGameEnd(GameProps.GameEnd.ONGOING);
                 gameScreen.getMoveHistoryBoard().updateMoveHistory();
             }
         }
@@ -379,7 +379,7 @@ public final class GameMenu extends TextButton {
                 public void clicked(final InputEvent event, final float x, final float y) {
                     gameMenuDialog.remove();
 
-                    gameScreen.getGameBoardTable().getArtificialIntelligence().setStopAI(true);
+                    gameScreen.getChessLayerTable().getArtificialIntelligence().setStopAI(true);
                     LoadGameButton.super.dialog.show(gameScreen.getPopupUiStage());
                 }
             });
@@ -412,11 +412,11 @@ public final class GameMenu extends TextButton {
                             GuiUtils.MOVE_LOG_PREF.flush();
                         }
                         gameScreen.updateChessBoard(FenUtilities.createGameFromSavedData(moveHistory, gameScreen.getMoveHistoryBoard().getMoveLog()));
-                        gameScreen.getGameBoardTable().updateAiMove(null);
-                        gameScreen.getGameBoardTable().updateHumanMove(null);
+                        gameScreen.getChessLayerTable().updateAiMove(null);
+                        gameScreen.getChessLayerTable().updateHumanMove(null);
                         gameScreen.getMoveHistoryBoard().updateMoveHistory();
-                        gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
-                        gameScreen.getGameBoardTable().updateGameEnd(GameProps.GameEnd.ONGOING);
+                        gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
+                        gameScreen.getChessLayerTable().updateGameEnd(GameProps.GameEnd.ONGOING);
                         final Label gameLoadedLabel = new Label("Game Loaded!", GuiUtils.UI_SKIN);
                         gameLoadedLabel.setColor(Color.BLACK);
                         new Dialog("Game Loaded Message", GuiUtils.UI_SKIN) {

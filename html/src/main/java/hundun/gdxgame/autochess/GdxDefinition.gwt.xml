@@ -10,17 +10,17 @@
 
   <!-- "Inherits" lines are how GWT knows where to look for code and configuration in other projects or libraries. -->
   <inherits name="com.badlogic.gdx.backends.gdx_backends_gwt" />
-  <inherits name="com.badlogic.ashley_gwt" />
-  <inherits name="com.crashinvaders.vfx.GdxVfxCore" />
-  <inherits name="com.crashinvaders.vfx.GdxVfxEffects" />
-  <inherits name="com.crashinvaders.vfx.GdxVfxGwt" />
-  <inherits name="formic" />
-  <inherits name="guacamole_gdx_gwt" />
-  <inherits name="hundun.gdxgame.autochess.AutoChessGame" />
-  <inherits name="hundun.gdxgame.autochess.Shared" />
-  <inherits name="libgdx_screenmanager" />
+    <!-- <inherits name="com.badlogic.ashley_gwt" />-->
+    <inherits name="com.crashinvaders.vfx.GdxVfxCore" />
+    <inherits name="com.crashinvaders.vfx.GdxVfxEffects" />
+    <inherits name="com.crashinvaders.vfx.GdxVfxGwt" />
+    <inherits name="formic" />
+    <inherits name="guacamole_gdx_gwt" />
+    <inherits name="hundun.gdxgame.autochess.AutoChessGame" />
+    <inherits name="hundun.gdxgame.autochess.Shared" />
+    <inherits name="libgdx_screenmanager" />
 
-  <!-- You must change this if you rename packages later, or rename GwtLauncher. -->
+    <!-- You must change this if you rename packages later, or rename GwtLauncher. -->
   <entry-point class="hundun.gdxgame.autochess.gwt.GwtLauncher" />
 
   <!-- Reflection includes may be needed for your code or library code. Each value is separated by periods ('.'). -->

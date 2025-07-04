@@ -69,7 +69,7 @@ public final class GamePreference extends TextButton {
                         protected void result(final Object object) {
                             try {
                                 gameScreen.updateChessBoard(FenUtilities.createGameFromFEN(fenTextFiled.getText()));
-                                gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
+                                gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
                                 gameScreen.getMoveHistoryBoard().getMoveLog().clear();
                                 gameScreen.getMoveHistoryBoard().updateMoveHistory();
                             } catch (final RuntimeException ignored) {
@@ -120,7 +120,7 @@ public final class GamePreference extends TextButton {
                 @Override
                 public void clicked(final InputEvent event, final float x, final float y) {
                     gamePreferenceDialog.remove();
-                    if (gameScreen.getMoveHistoryBoard().getMoveLog().size() > 0 && !gameScreen.getGameBoardTable().isGameEnd()) {
+                    if (gameScreen.getMoveHistoryBoard().getMoveLog().size() > 0 && !gameScreen.getChessLayerTable().isGameEnd()) {
                         undoPlayerMove(gameScreen);
                     }
                 }
@@ -132,7 +132,7 @@ public final class GamePreference extends TextButton {
                     || (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Input.Keys.Z))
                     || (Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT) && Gdx.input.isKeyJustPressed(Input.Keys.Z))
                     || (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_RIGHT) && Gdx.input.isKeyPressed(Input.Keys.Z))) {
-                if (gameScreen.getMoveHistoryBoard().getMoveLog().size() > 0 && !gameScreen.getGameBoardTable().isGameEnd()) {
+                if (gameScreen.getMoveHistoryBoard().getMoveLog().size() > 0 && !gameScreen.getChessLayerTable().isGameEnd()) {
                     this.undoPlayerMove(gameScreen);
                 }
             }
@@ -142,16 +142,16 @@ public final class GamePreference extends TextButton {
         //If player made move but AI is thinking, undo player move, terminate AI
         //Otherwise, both player is human, undo that player move only
         private void undoPlayerMove(final GameScreen gameScreen) {
-            if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
-                    && !gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
-                gameScreen.getGameBoardTable().getArtificialIntelligence().setStopAI(true);
+            if (gameScreen.getChessLayerTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
+                    && !gameScreen.getChessLayerTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
+                gameScreen.getChessLayerTable().getArtificialIntelligence().setStopAI(true);
                 this.undoMove(gameScreen);
-            } else if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
-                    && gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
+            } else if (!gameScreen.getChessLayerTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
+                    && gameScreen.getChessLayerTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
                 gameScreen.getMoveHistoryBoard().getMoveLog().removeMove();
                 this.undoMove(gameScreen);
-            } else if (!gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
-                    && !gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
+            } else if (!gameScreen.getChessLayerTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
+                    && !gameScreen.getChessLayerTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer().getOpponent())) {
                 this.undoMove(gameScreen);
             }
         }
@@ -159,9 +159,9 @@ public final class GamePreference extends TextButton {
         private void undoMove(final GameScreen gameScreen) {
             final Move lastMove = gameScreen.getMoveHistoryBoard().getMoveLog().removeMove();
             gameScreen.updateChessBoard(gameScreen.getChessBoard().getCurrentPlayer().undoMove(lastMove).getPreviousBoard());
-            gameScreen.getGameBoardTable().updateHumanMove(null);
-            gameScreen.getGameBoardTable().updateAiMove(null);
-            gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
+            gameScreen.getChessLayerTable().updateHumanMove(null);
+            gameScreen.getChessLayerTable().updateAiMove(null);
+            gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
             gameScreen.getMoveHistoryBoard().updateMoveHistory();
         }
     }
@@ -193,8 +193,8 @@ public final class GamePreference extends TextButton {
                 buttons[i].addListener(new ClickListener() {
                     @Override
                     public void clicked(final InputEvent event, final float x, final float y) {
-                        gameScreen.getBoardLayerTable().setTileColor(GuiUtils.BOARD_COLORS.get(finalI));
-                        gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
+                        gameScreen.getTileLayerTable().setTileColor(GuiUtils.BOARD_COLORS.get(finalI));
+                        gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
                         promoteDialog.remove();
                     }
                 });
@@ -212,8 +212,8 @@ public final class GamePreference extends TextButton {
                     gamePreferenceDialog.remove();
 
 
-                    gameScreen.getGameBoardTable().updateBoardDirection();
-                    gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
+                    gameScreen.getChessLayerTable().updateBoardDirection();
+                    gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
 
 
                     gameScreen.getMoveHistoryBoard().changeMoveHistoryDirection();

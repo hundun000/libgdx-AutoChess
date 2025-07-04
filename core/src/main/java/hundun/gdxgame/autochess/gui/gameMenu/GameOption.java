@@ -45,7 +45,7 @@ public final class GameOption extends TextButton {
             this.addListener(new ClickListener() {
                 @Override
                 public void clicked(final InputEvent event, final float x, final float y) {
-                    gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
+                    gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
                     dialog.remove();
                     for (final GameOptionCheckBox gameOptionCheckBox : gameOptionCheckBoxList) {
                         gameOptionCheckBox.update();
@@ -76,7 +76,7 @@ public final class GameOption extends TextButton {
 
         @Override
         protected void update() {
-            super.gameScreen.getGameBoardTable().updateHighlightMove(GameProps.HighlightMove.getHighlightMoveState(isChecked()));
+            super.gameScreen.getChessLayerTable().updateHighlightMove(GameProps.HighlightMove.getHighlightMoveState(isChecked()));
         }
     }
 
@@ -88,7 +88,7 @@ public final class GameOption extends TextButton {
 
         @Override
         protected void update() {
-            super.gameScreen.getGameBoardTable().updateHighlightPreviousMove(GameProps.HighlightPreviousMove.getHighlightPreviousMoveState(isChecked()));
+            super.gameScreen.getChessLayerTable().updateHighlightPreviousMove(GameProps.HighlightPreviousMove.getHighlightPreviousMoveState(isChecked()));
         }
     }
 }

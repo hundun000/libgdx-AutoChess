@@ -59,13 +59,13 @@ public final class PawnPromotionInterface {
                     pawnPromotion.setPromotedPiece(getPromotionPieces.get(finalI));
                     promoteDialog.remove();
                     gameScreen.updateChessBoard(promoteLibGDXPawn(gameScreen.getChessBoard(), pawnPromotion));
-                    gameScreen.getGameBoardTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getBoardLayerTable());
+                    gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
                     gameScreen.getMoveHistoryBoard().getMoveLog().addMove(pawnPromotion);
                     gameScreen.getMoveHistoryBoard().updateMoveHistory();
-                    if (gameScreen.getGameBoardTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
+                    if (gameScreen.getChessLayerTable().isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())) {
                         gameScreen.afterMove(pawnPromotion);
                     } else {
-                        gameScreen.getGameBoardTable().checkEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
+                        gameScreen.getChessLayerTable().checkEndGameMessage(gameScreen.getChessBoard(), gameScreen.getPopupUiStage());
                     }
                 }
             });

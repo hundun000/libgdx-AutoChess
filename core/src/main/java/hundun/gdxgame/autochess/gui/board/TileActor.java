@@ -1,60 +1,55 @@
 package hundun.gdxgame.autochess.gui.board;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import hundun.gdxgame.autochess.engine.board.Board;
-import hundun.gdxgame.autochess.engine.pieces.Piece;
+import hundun.gdxgame.autochess.engine.board.BoardUtils;
 import hundun.gdxgame.autochess.gui.GuiUtils;
-import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
 
 public final class TileActor extends Image {
-    public final GameScreen gameScreen;
-    int tileID;
-    private BitmapFont font; // 来自 Skin
-    private GlyphLayout glyphLayout = new GlyphLayout(); // 用于计算文本尺寸
-    protected TileActor(final GameScreen gameScreen, final TextureRegion region, final int tileID) {
-        super(region);
-        this.setVisible(true);
-        this.gameScreen = gameScreen;
-        this.addListener(new TileActorClickListener(this, tileID));
-        this.font = GuiUtils.UI_SKIN.getFont("font");
+
+    private final int tileID;
+
+    public TileActor(final int tileID) {
+        super(GuiUtils.GET_TILE_TEXTURE_REGION("white"));
         this.tileID = tileID;
+        this.setVisible(true);
     }
 
-    public Piece getPiece(final Board chessBoard, final Piece humanPiece, final int tileID) {
-        final Piece piece = chessBoard.getTile(tileID).getPiece();
-        if (piece == null) {
-            return null;
+    private Color getTileColor(final GuiUtils.TILE_COLOR TILE_COLOR) {
+        if (BoardUtils.FIRST_ROW.get(this.tileID) || BoardUtils.THIRD_ROW.get(this.tileID) || BoardUtils.FIFTH_ROW.get(this.tileID) || BoardUtils.SEVENTH_ROW.get(this.tileID)) {
+            return this.tileID % 2 == 0 ? TILE_COLOR.LIGHT_TILE() : TILE_COLOR.DARK_TILE();
         }
-        if (piece.getPiecePosition() == tileID && humanPiece.getLeague() == piece.getLeague()) {
-            return piece;
+        return this.tileID % 2 != 0 ? TILE_COLOR.LIGHT_TILE() : TILE_COLOR.DARK_TILE();
+    }
+
+    private Color getHumanMoveColor(final ChessLayerTable chessLayerTable, final TileLayerTable tileLayerTable) {
+        if (this.tileID == chessLayerTable.getHumanMove().getCurrentCoordinate()) {
+            return GuiUtils.HUMAN_PREVIOUS_TILE;
+        } else if (this.tileID == chessLayerTable.getHumanMove().getDestinationCoordinate()) {
+            return GuiUtils.HUMAN_CURRENT_TILE;
         }
-        return null;
+        return this.getTileColor(tileLayerTable.getTileColor());
     }
 
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha); // 先绘制 Image 本身
-
-
-        String hpText = "Pos: " + tileID;
-
-        // 计算文本尺寸
-        glyphLayout.setText(font, hpText);
-        float textWidth = glyphLayout.width;
-        float textHeight = glyphLayout.height;
-
-        // 绘制生命值信息
-        // 在 Actor 的上方中心绘制文本
-        float textX = getX() + (getWidth() - textWidth) / 2;
-        float textY = getY() + getHeight() + textHeight;
-
-        font.draw(batch, hpText, textX, textY);
-
+    private Color getAIMoveColor(final ChessLayerTable chessLayerTable, final TileLayerTable tileLayerTable) {
+        if (this.tileID == chessLayerTable.getAiMove().getCurrentCoordinate()) {
+            return GuiUtils.AI_PREVIOUS_TILE;
+        } else if (this.tileID == chessLayerTable.getAiMove().getDestinationCoordinate()) {
+            return GuiUtils.AI_CURRENT_TILE;
+        }
+        return this.getTileColor(tileLayerTable.getTileColor());
     }
 
-
+    public void repaint(final ChessLayerTable chessLayerTable, final Board chessBoard, final TileLayerTable tileLayerTable) {
+        if (chessBoard.getCurrentPlayer().getPlayerKing() != null && chessBoard.getCurrentPlayer().isInCheck() && chessBoard.getCurrentPlayer().getPlayerKing().getPiecePosition() == this.tileID) {
+            this.setColor(Color.RED);
+        } else if (chessLayerTable.getHumanMove() != null && chessLayerTable.isHighlightPreviousMove()) {
+            this.setColor(this.getHumanMoveColor(chessLayerTable, tileLayerTable));
+        } else if (chessLayerTable.getAiMove() != null && chessLayerTable.isHighlightPreviousMove()) {
+            this.setColor(this.getAIMoveColor(chessLayerTable, tileLayerTable));
+        } else {
+            this.setColor(this.getTileColor(tileLayerTable.getTileColor()));
+        }
+    }
 }

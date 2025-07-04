@@ -2,16 +2,11 @@ package hundun.gdxgame.autochess.gui.gameScreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import hundun.gdxgame.autochess.AutoChessGame;
 import hundun.gdxgame.autochess.gui.GuiUtils;
-import hundun.gdxgame.libv3.corelib.base.BaseHundunScreen;
 
 public final class WelcomeScreen extends BaseAutoChessScreen {
 
@@ -46,7 +41,7 @@ public final class WelcomeScreen extends BaseAutoChessScreen {
         textButton.addListener(new ClickListener() {
             @Override
             public void clicked(final InputEvent event, final float x, final float y) {
-                chessGame.gotoGameScreen(GameScreen.BOARD_STATE.NEW_GAME, GameScreen.BOARD_STATE.NEW_GAME.getBoard(chessGame.getGameScreen()));
+                chessGame.gotoGameScreen(BOARD_STATE.NEW_GAME, BOARD_STATE.NEW_GAME.getBoard(chessGame.getGameScreen()));
             }
         });
         return textButton;
@@ -81,7 +76,7 @@ public final class WelcomeScreen extends BaseAutoChessScreen {
             @Override
             public void clicked(final InputEvent event, final float x, final float y) {
                 try {
-                    chessGame.gotoGameScreen(GameScreen.BOARD_STATE.LOAD_GAME, GameScreen.BOARD_STATE.LOAD_GAME.getBoard(chessGame.getGameScreen()));
+                    chessGame.gotoGameScreen(BOARD_STATE.LOAD_GAME, BOARD_STATE.LOAD_GAME.getBoard(chessGame.getGameScreen()));
                 } catch (final RuntimeException e) {
                     final Label label = new Label("No game to load", GuiUtils.UI_SKIN);
                     label.setColor(Color.BLACK);
