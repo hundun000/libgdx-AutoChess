@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.google.common.collect.ImmutableList;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
+import lombok.Getter;
 
 public final class GuiUtils {
 
@@ -39,6 +41,14 @@ public final class GuiUtils {
     public static final Color AI_PREVIOUS_TILE = Color.PINK, AI_CURRENT_TILE = new Color(1, 51 / 255f, 51 / 255f, 1);
     public static final ImmutableList<TILE_COLOR> BOARD_COLORS = ImmutableList.of(TILE_COLOR.CLASSIC, TILE_COLOR.DARK_BLUE, TILE_COLOR.DARK_GRAY, TILE_COLOR.LIGHT_BLUE, TILE_COLOR.LIGHT_GRAY, TILE_COLOR.BUMBLEBEE);
 
+    static {
+        Texture texture = new Texture(Gdx.files.internal("All Icons.png"));
+        TextureRegion[][] regions = TextureRegion.split(texture, 16, 16);
+        int blockWidth = 6;
+        bulletTexture = regions[0][blockWidth * 2 + 2];
+    }
+    @Getter
+    static TextureRegion bulletTexture;
     private GuiUtils() {
         throw new IllegalStateException("Cannot instantiate GuiUtils");
     }
@@ -54,6 +64,8 @@ public final class GuiUtils {
     public static TextureRegion GET_TILE_TEXTURE_REGION(final String region) {
         return GAME_TEXTURE_ATLAS.findRegion(region);
     }
+
+
 
     public static void dispose() {
         GAME_TEXTURE_ATLAS.dispose();

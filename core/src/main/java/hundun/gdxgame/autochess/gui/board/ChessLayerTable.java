@@ -18,13 +18,18 @@ import hundun.gdxgame.autochess.gui.ArtificialIntelligence;
 import hundun.gdxgame.autochess.gui.GuiUtils;
 import hundun.gdxgame.autochess.gui.board.GameProps.PlayerType;
 import hundun.gdxgame.autochess.gui.gameScreen.GameScreen;
+import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 public final class ChessLayerTable extends Table {
 
 
     private final ArtificialIntelligence artificialIntelligence;
     //object
-    private Piece humanPiece;
+    private Piece humanPickingPiece;
     private Move humanMove, aiMove;
     //enum
     private GameProps.GameEnd gameEnd;
@@ -32,7 +37,6 @@ public final class ChessLayerTable extends Table {
     private GameProps.HighlightMove highlightMove;
     private GameProps.ArtificialIntelligenceWorking artificialIntelligenceWorking;
     private GameProps.PlayerType whitePlayerType, blackPlayerType;
-    public BoardDirectionStrategy boardDirectionStrategy;
     final GameScreen gameScreen;
 
 
@@ -41,7 +45,7 @@ public final class ChessLayerTable extends Table {
     public ChessLayerTable(final GameScreen gameScreen) {
         //mutable
         this.gameScreen = gameScreen;
-        this.humanPiece = null;
+        this.humanPickingPiece = null;
         this.humanMove = null;
 
         this.gameEnd = GameProps.GameEnd.ONGOING;
@@ -55,20 +59,19 @@ public final class ChessLayerTable extends Table {
         //immutable
         this.artificialIntelligence = new ArtificialIntelligence();
 
-        this.boardDirectionStrategy = BoardDirectionStrategy.NORMAL_BOARD;
         this.setFillParent(true);
-        for (int i = 0; i < BoardUtils.NUM_TILES; i += 1) {
+/*        for (int i = 0; i < BoardUtils.NUM_TILES; i += 1) {
             if (i % 8 == 0) {
                 this.row();
             }
-            this.add(new ChessActor(gameScreen, this.textureRegion(gameScreen.getChessBoard(), i), i)).size(GuiUtils.TILE_SIZE);
+            this.add(new ChessActor(gameScreen, GuiUtils.TRANSPARENT_TEXTURE_REGION, i)).size(GuiUtils.TILE_SIZE);
         }
-        this.validate();
+        this.validate();*/
     }
 
     //object updater
-    public void updateHumanPiece(final Piece humanPiece) {
-        this.humanPiece = humanPiece;
+    public void updateHumanPickingPiece(final Piece humanPiece) {
+        this.humanPickingPiece = humanPiece;
     }
 
     public void updateHumanMove(final Move humanMove) {
@@ -96,9 +99,6 @@ public final class ChessLayerTable extends Table {
         this.highlightPreviousMove = highlightPreviousMove;
     }
 
-    public void updateBoardDirection() {
-        this.boardDirectionStrategy = this.boardDirectionStrategy.opposite();
-    }
 
     public void updateWhitePlayerType(final GameProps.PlayerType playerType) {
         this.whitePlayerType = playerType;
@@ -109,8 +109,8 @@ public final class ChessLayerTable extends Table {
     }
 
     //getter
-    public Piece getHumanPiece() {
-        return this.humanPiece;
+    public Piece getHumanPickingPiece() {
+        return this.humanPickingPiece;
     }
 
     public Move getHumanMove() {
@@ -147,8 +147,33 @@ public final class ChessLayerTable extends Table {
         return player.getLeague() == League.WHITE ? this.whitePlayerType == GameProps.PlayerType.COMPUTER : this.blackPlayerType == GameProps.PlayerType.COMPUTER;
     }
 
+
+    @Getter
+    Map<Integer, ChessActor> chessActorMap = new HashMap<>();
+
     public void rebuildGameBoardTable(final GameScreen gameScreen, final Board chessBoard, final TileLayerTable tileLayerTable) {
-        this.boardDirectionStrategy.rebuildGameBoardTable(gameScreen, this, chessBoard, tileLayerTable);
+        this.clearChildren();
+        chessActorMap.clear();
+        tileLayerTable.clearChildren();
+        IntStream iteration = IntStream.iterate(0, n -> n + 1).limit(BoardUtils.NUM_TILES);
+
+        iteration.forEachOrdered(i -> {
+            if (i % 8 == 0) {
+                this.row();
+                tileLayerTable.row();
+            }
+            Piece piece = chessBoard.getTile(i).getPiece();
+            TextureRegion textureRegion = piece != null ? GuiUtils.GET_PIECE_TEXTURE_REGION(piece) : GuiUtils.TRANSPARENT_TEXTURE_REGION;
+            ChessActor chessActor = new ChessActor(gameScreen, textureRegion, i, piece);
+            chessActorMap.put(i, chessActor);
+            this.add(chessActor).size(GuiUtils.TILE_SIZE);
+            final TileActor tile = new TileActor(i);
+            tile.repaint(this, chessBoard, gameScreen.getTileLayerTable());
+            tileLayerTable.add(tile).size(GuiUtils.TILE_SIZE);
+        });
+
+        this.validate();
+        tileLayerTable.validate();
     }
 
     public void displayTimeOutMessage(final Board chessBoard, final Stage stage) {
@@ -171,28 +196,8 @@ public final class ChessLayerTable extends Table {
         this.updateGameEnd(GameProps.GameEnd.ENDED);
     }
 
-    protected TextureRegion textureRegion(final Board board, final int tileID) {
-        return board.getTile(tileID).isTileOccupied() ? GuiUtils.GET_PIECE_TEXTURE_REGION(board.getTile(tileID).getPiece()) : GuiUtils.TRANSPARENT_TEXTURE_REGION;
-    }
 
-    AiFilter aiFilter = new AiFilter() {
-        @Override
-        public boolean filter(Move it) {
-            return gameScreen.getAutoWaitingPieces().contains(it.getMovedPiece());
-        }
-    };
 
-    public void nextAutoPieceMove() {
 
-        if (isAIPlayer(gameScreen.getChessBoard().getCurrentPlayer())
-                && !gameScreen.getChessBoard().getCurrentPlayer().isInCheckmate()
-                && !gameScreen.getChessBoard().getCurrentPlayer().isInStalemate()) {
-            if (!getArtificialIntelligenceWorking()) {
-                Gdx.app.log(this.getClass().getSimpleName(), "startAI");
-                updateArtificialIntelligenceWorking(GameProps.ArtificialIntelligenceWorking.WORKING);
-                this.artificialIntelligence.startAI(gameScreen, aiFilter);
-            }
-        }
-    }
 
 }

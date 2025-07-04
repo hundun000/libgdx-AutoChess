@@ -15,7 +15,7 @@ public final class ChessActor extends Image {
     int tileID;
     private BitmapFont font; // 来自 Skin
     private GlyphLayout glyphLayout = new GlyphLayout(); // 用于计算文本尺寸
-    protected ChessActor(final GameScreen gameScreen, final TextureRegion region, final int tileID) {
+    protected ChessActor(final GameScreen gameScreen, final TextureRegion region, final int tileID, Piece piece) {
         super(region);
         this.setVisible(true);
         this.gameScreen = gameScreen;

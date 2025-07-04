@@ -14,8 +14,6 @@ import static hundun.gdxgame.autochess.engine.board.Move.MajorMove;
 @Setter
 public abstract class Piece {
 
-    public int id;
-
     private final PieceType pieceType;
     private int piecePosition;
     private final League league;

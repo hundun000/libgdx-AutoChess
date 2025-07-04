@@ -25,21 +25,21 @@ public class ChessActorClickListener extends ClickListener {
                 return;
             }
 
-            if (gameScreen.getChessLayerTable().getHumanPiece() == null) {
+            if (gameScreen.getChessLayerTable().getHumanPickingPiece() == null) {
                 gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
                 if (gameScreen.getChessBoard().getTile(tileID).getPiece().getLeague() == gameScreen.getChessBoard().getCurrentPlayer().getLeague()) {
-                    gameScreen.getChessLayerTable().updateHumanPiece(gameScreen.getChessBoard().getTile(tileID).getPiece());
+                    gameScreen.getChessLayerTable().updateHumanPickingPiece(gameScreen.getChessBoard().getTile(tileID).getPiece());
                     if (gameScreen.getChessLayerTable().isHighlightMove()) {
                         gameScreen.getTileLayerTable().highlightLegalMove(gameScreen.getChessLayerTable(), gameScreen.getChessBoard());
                     }
                 }
 
             } else {
-                if (gameScreen.getChessLayerTable().getHumanPiece().getLeague() == gameScreen.getChessBoard().getCurrentPlayer().getLeague()) {
-                    final Move move = Move.MoveFactory.createMove(gameScreen.getChessBoard(), gameScreen.getChessLayerTable().getHumanPiece(), tileID);
+                if (gameScreen.getChessLayerTable().getHumanPickingPiece().getLeague() == gameScreen.getChessBoard().getCurrentPlayer().getLeague()) {
+                    final Move move = Move.MoveFactory.createMove(gameScreen.getChessBoard(), gameScreen.getChessLayerTable().getHumanPickingPiece(), tileID);
                     final MoveTransition transition = gameScreen.getChessBoard().getCurrentPlayer().makeMove(move);
                     if (transition.getMoveStatus().isDone()) {
-                        gameScreen.getChessLayerTable().updateHumanPiece(null);
+                        gameScreen.getChessLayerTable().updateHumanPickingPiece(null);
                         gameScreen.updateChessBoard(transition.getLatestBoard());
                         gameScreen.getChessLayerTable().updateAiMove(null);
                         gameScreen.getChessLayerTable().updateHumanMove(move);
@@ -57,15 +57,15 @@ public class ChessActorClickListener extends ClickListener {
                             }
                         }
                     } else {
-                        gameScreen.getChessLayerTable().updateHumanPiece(chessActor.getPiece(gameScreen.getChessBoard(), gameScreen.getChessLayerTable().getHumanPiece(), tileID));
+                        gameScreen.getChessLayerTable().updateHumanPickingPiece(chessActor.getPiece(gameScreen.getChessBoard(), gameScreen.getChessLayerTable().getHumanPickingPiece(), tileID));
                         gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
-                        if (chessActor.getPiece(gameScreen.getChessBoard(), gameScreen.getChessLayerTable().getHumanPiece(), tileID) != null && gameScreen.getChessLayerTable().isHighlightMove()) {
+                        if (chessActor.getPiece(gameScreen.getChessBoard(), gameScreen.getChessLayerTable().getHumanPickingPiece(), tileID) != null && gameScreen.getChessLayerTable().isHighlightMove()) {
                             gameScreen.getTileLayerTable().highlightLegalMove(gameScreen.getChessLayerTable(), gameScreen.getChessBoard());
                         }
                     }
                 } else {
                     gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
-                    gameScreen.getChessLayerTable().updateHumanPiece(null);
+                    gameScreen.getChessLayerTable().updateHumanPickingPiece(null);
                 }
             }
         } catch (final NullPointerException ignored) {

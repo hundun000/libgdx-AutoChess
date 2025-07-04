@@ -48,10 +48,10 @@ public final class TileLayerTable extends Table {
     }
 
     public void highlightLegalMove(final ChessLayerTable chessLayerTable, final Board chessBoard) {
-        final Piece piece = chessLayerTable.getHumanPiece();
+        final Piece piece = chessLayerTable.getHumanPickingPiece();
         final ImmutableList<Move> moveList = piece != null && piece.getLeague() == chessBoard.getCurrentPlayer().getLeague() ? ImmutableList.copyOf(piece.calculateLegalMoves(chessBoard)) : ImmutableList.of();
         for (final Move move : moveList) {
-            final int tileID = chessLayerTable.boardDirectionStrategy.flipped() ? 63 - move.getDestinationCoordinate() : move.getDestinationCoordinate();
+            final int tileID = move.getDestinationCoordinate();
             if (move.isAttack() || move.isPromotionMove() && ((Move.PawnPromotion) move).getDecoratedMove().isAttack()) {
                 this.getChildren().get(tileID).setColor(new Color(204 / 255f, 0 / 255f, 0 / 255f, 1));
             } else {

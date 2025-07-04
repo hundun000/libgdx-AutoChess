@@ -259,7 +259,7 @@ public final class GameMenu extends TextButton {
             private void restartGame(final GameScreen gameScreen, final int minute) {
                 gameScreen.updateChessBoard(Board.createStandardBoard(minute, BoardUtils.DEFAULT_TIMER_SECOND, BoardUtils.DEFAULT_TIMER_MILLISECOND));
                 gameScreen.getMoveHistoryBoard().getMoveLog().clear();
-                gameScreen.getChessLayerTable().updateHumanPiece(null);
+                gameScreen.getChessLayerTable().updateHumanPickingPiece(null);
                 gameScreen.getChessLayerTable().updateAiMove(null);
                 gameScreen.getChessLayerTable().updateHumanMove(null);
                 gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());

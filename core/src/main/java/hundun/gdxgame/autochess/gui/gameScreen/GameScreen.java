@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import de.damios.guacamole.tuple.Pair;
 import hundun.gdxgame.autochess.engine.League;
 import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.Board.BoardBuilder;
@@ -15,6 +16,8 @@ import hundun.gdxgame.autochess.engine.board.Move;
 import hundun.gdxgame.autochess.engine.pieces.King;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.engine.pieces.Rook;
+import hundun.gdxgame.autochess.gui.board.BulletActor;
+import hundun.gdxgame.autochess.gui.board.ChessActor;
 import hundun.gdxgame.autochess.gui.board.TileLayerTable;
 import hundun.gdxgame.autochess.gui.board.ChessLayerTable;
 import hundun.gdxgame.autochess.gui.board.GameProps.GameEnd;
@@ -122,12 +125,13 @@ public final class GameScreen extends BaseAutoChessScreen {
     }
 
     @Getter
-    private List<Piece> autoWaitingPieces = new ArrayList<>();
+    private List<BulletActor> autoWaitingBullet = new ArrayList<>();
     @Getter
     AutoStep step;
     public enum AutoStep {
         WAIT_NEW_POS,
-        WAIT_ATTACK
+        WAIT_ATTACK,
+        WAIT_BULLET
 
     }
 
@@ -162,28 +166,31 @@ public final class GameScreen extends BaseAutoChessScreen {
             break;
             case WAIT_ATTACK:
             {
-                autoWaitingPieces.clear();
-                autoWaitingPieces.addAll(
-                    this.getChessBoard().getAllPieces().stream()
-                        .collect(Collectors.toList())
-                );
-                Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieces size: " + autoWaitingPieces.size());
-                step = AutoStep.WAIT_NEW_POS;
-                gameAutoBattleControlPanel.getButton().setText("NextTurn");
+                autoWaitingBullet.clear();
+                var attackMoves = chessBoard.getWhitePlayer().getLegalMoves().stream()
+                    .filter(it -> it.getAttackedPiece() != null)
+                    .collect(Collectors.toList());
+                attackMoves.forEach(it -> {
+                    BulletActor bulletActor = new BulletActor();
+                    ChessActor attackFrom = chessLayerTable.getChessActorMap().get(it.getMovedPiece().getPiecePosition());
+                    ChessActor attackTo = chessLayerTable.getChessActorMap().get(it.getAttackedPiece().getPiecePosition());
+                    bulletActor.setPosition(attackFrom.getX(), attackFrom.getY());
+                    bulletActor.setTargetX(attackTo.getX());
+                    bulletActor.setTargetY(attackTo.getY());
+                    chessLayerTable.addActor(bulletActor);
+                    autoWaitingBullet.add(bulletActor);
+                });
+
+                Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieces size: " + autoWaitingBullet.size());
+                step = AutoStep.WAIT_BULLET;
+                gameAutoBattleControlPanel.getButton().setText("Skip bullet");
             }
             break;
         }
     }
 
     public void afterMove(Move move) {
-        if (move.equals(Move.MoveFactory.getNullMove())) {
-            Gdx.app.log(this.getClass().getSimpleName(), "afterMove: NullMove");
-            autoWaitingPieces.clear();
-        } else {
-            Gdx.app.log(this.getClass().getSimpleName(), "afterMove: " + move);
-            autoWaitingPieces.removeIf(it -> !this.getChessBoard().getAllPieces().contains(it) || it == move.getMovedPiece());
-            Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieceIds size = " + autoWaitingPieces.size());
-        }
+
         chessLayerTable.checkEndGameMessage(this.getChessBoard(), this.getPopupUiStage());
     }
 
@@ -224,21 +231,81 @@ public final class GameScreen extends BaseAutoChessScreen {
     }
 
 
+    float bulletSecondSpeed = 50;
+
     @Override
     protected void beforeUiStageAct(float delta) {
         super.beforeUiStageAct(delta);
         this.gameMenu.detectKeyPressed(this);
         this.gamePreference.detectUndoMoveKeyPressed(this);
+
+        if (!this.autoWaitingBullet.isEmpty()) {
+            List<BulletActor> removeBullet = new ArrayList<>();
+            this.autoWaitingBullet.stream().forEach(it -> {
+                Pair<Float, Float> move = calculateDisplacement(it.getX(), it.getY(), it.getTargetX(), it.getTargetY(), bulletSecondSpeed, delta);
+                if (move != null) {
+                    it.setPosition(it.getX() + move.x, it.getY() + move.y);
+                } else {
+                    removeBullet.add(it);
+                    chessLayerTable.removeActor(it);
+                }
+            });
+            this.autoWaitingBullet.removeAll(removeBullet);
+        } else {
+            if (step == AutoStep.WAIT_BULLET) {
+                step = AutoStep.WAIT_NEW_POS;
+            }
+        }
+
     }
 
-    @Override
-    public void onLogicFrame() {
-        if (this.getChessLayerTable().getArtificialIntelligenceWorking()) {
-            this.getChessLayerTable().getArtificialIntelligence().getProgressBar().setValue(this.getChessLayerTable().getArtificialIntelligence().getMoveCount());
-        } else if (!this.autoWaitingPieces.isEmpty()) {
-            chessLayerTable.nextAutoPieceMove();
+    /**
+     * 计算 delta 时间内的位移分量。
+     *
+     * @param startX  起始点 X 坐标
+     * @param startY  起始点 Y 坐标
+     * @param endX    终点 X 坐标
+     * @param endY    终点 Y 坐标
+     * @param speed   速度大小 (单位：单位距离/秒)
+     * @param deltaTime  时间间隔 (单位：秒)
+     * @return 一个 Vector2 对象，包含 X 和 Y 方向的位移分量。  返回 null 如果起点和终点重合。
+     */
+    public static Pair<Float, Float> calculateDisplacement(float startX, float startY, float endX, float endY, float speed, float deltaTime) {
+        // 计算方向向量
+        float dx = endX - startX;
+        float dy = endY - startY;
+
+        // 如果起点和终点重合，则没有位移
+        if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01) {
+            return null; // 或者返回一个 (0, 0) 的 Vector2, 根据你的需求
         }
+
+        // 计算方向向量的长度
+        float distanceToTarget  = (float) Math.sqrt(dx * dx + dy * dy);
+
+        // 归一化方向向量  (使其长度为 1)
+        float directionX = dx / distanceToTarget ;
+        float directionY = dy / distanceToTarget ;
+
+        // 计算理想位移
+        float idealDisplacementX = directionX * speed * deltaTime;
+        float idealDisplacementY = directionY * speed * deltaTime;
+
+        // 计算理想位移的大小
+        float idealDisplacementMagnitude = (float) Math.sqrt(idealDisplacementX * idealDisplacementX + idealDisplacementY * idealDisplacementY);
+
+        // 如果理想位移超过了剩余距离，则限制位移
+        if (idealDisplacementMagnitude > distanceToTarget) {
+            // 计算缩放因子，使得位移刚好到达目标点
+            float scaleFactor = distanceToTarget / idealDisplacementMagnitude;
+            idealDisplacementX *= scaleFactor;
+            idealDisplacementY *= scaleFactor;
+        }
+
+        // 返回位移分量
+        return new Pair<>(idealDisplacementX, idealDisplacementY);
     }
+
 
 
     public Stage getPopupUiStage() {

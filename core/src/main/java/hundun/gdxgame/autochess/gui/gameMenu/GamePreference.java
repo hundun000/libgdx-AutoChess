@@ -39,7 +39,6 @@ public final class GamePreference extends TextButton {
         private GamePreferenceDialog(final GameScreen gameScreen) {
             super("Game Preference", GuiUtils.UI_SKIN);
             this.getContentTable().padTop(10);
-            this.getContentTable().add(new FlipBoardButton(gameScreen, this)).width(GuiUtils.WIDTH).padBottom(GuiUtils.PAD).padRight(GuiUtils.PAD);
             this.getContentTable().add(new BoardColorButton(gameScreen, this)).width(GuiUtils.WIDTH).padBottom(GuiUtils.PAD).row();
             this.getContentTable().add(new ExportFEN(gameScreen, this)).width(GuiUtils.WIDTH).padBottom(GuiUtils.PAD).padRight(GuiUtils.PAD);
             this.getContentTable().add(new ImportFEN(gameScreen, this)).width(GuiUtils.WIDTH).padBottom(GuiUtils.PAD).row();
@@ -203,24 +202,4 @@ public final class GamePreference extends TextButton {
         }
     }
 
-    private static final class FlipBoardButton extends TextButton {
-        private FlipBoardButton(final GameScreen gameScreen, final GamePreferenceDialog gamePreferenceDialog) {
-            super("Flip Board", GuiUtils.UI_SKIN);
-            this.addListener(new ClickListener() {
-                @Override
-                public void clicked(final InputEvent event, final float x, final float y) {
-                    gamePreferenceDialog.remove();
-
-
-                    gameScreen.getChessLayerTable().updateBoardDirection();
-                    gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
-
-
-                    gameScreen.getMoveHistoryBoard().changeMoveHistoryDirection();
-                    gameScreen.getMoveHistoryBoard().updateMoveHistory();
-
-                }
-            });
-        }
-    }
 }

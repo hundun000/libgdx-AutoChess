@@ -47,11 +47,6 @@ public final class Board {
 
         this.moveCount = builder.moveCount();
         this.transitionMove = builder.transitionMove != null ? builder.transitionMove : MoveFactory.getNullMove();
-
-        AtomicInteger pieceIndex = new AtomicInteger(0);
-        getAllPieces().forEach(it -> {
-            it.id = pieceIndex.getAndAdd(1);
-        });
     }
 
     private static ImmutableList<Piece> calculateActivePieces(final BoardBuilder builder, final League league) {
