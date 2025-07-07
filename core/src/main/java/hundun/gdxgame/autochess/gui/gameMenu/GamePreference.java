@@ -192,7 +192,7 @@ public final class GamePreference extends TextButton {
                 buttons[i].addListener(new ClickListener() {
                     @Override
                     public void clicked(final InputEvent event, final float x, final float y) {
-                        gameScreen.getTileLayerTable().setTileColor(GuiUtils.BOARD_COLORS.get(finalI));
+                        gameScreen.getTileLayerTable().setTileColorTheme(GuiUtils.BOARD_COLORS.get(finalI));
                         gameScreen.getChessLayerTable().rebuildGameBoardTable(gameScreen, gameScreen.getChessBoard(), gameScreen.getTileLayerTable());
                         promoteDialog.remove();
                     }

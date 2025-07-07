@@ -39,7 +39,7 @@ public final class GuiUtils {
     //Previous and current tile
     public static final Color HUMAN_PREVIOUS_TILE = new Color(102 / 255f, 255 / 255f, 102 / 255f, 1), HUMAN_CURRENT_TILE = new Color(50 / 255f, 205 / 255f, 50 / 255f, 1);
     public static final Color AI_PREVIOUS_TILE = Color.PINK, AI_CURRENT_TILE = new Color(1, 51 / 255f, 51 / 255f, 1);
-    public static final ImmutableList<TILE_COLOR> BOARD_COLORS = ImmutableList.of(TILE_COLOR.CLASSIC, TILE_COLOR.DARK_BLUE, TILE_COLOR.DARK_GRAY, TILE_COLOR.LIGHT_BLUE, TILE_COLOR.LIGHT_GRAY, TILE_COLOR.BUMBLEBEE);
+    public static final ImmutableList<TileColorTheme> BOARD_COLORS = ImmutableList.of(TileColorTheme.CLASSIC, TileColorTheme.DARK_BLUE, TileColorTheme.DARK_GRAY, TileColorTheme.LIGHT_BLUE, TileColorTheme.LIGHT_GRAY, TileColorTheme.BUMBLEBEE);
 
     static {
         Texture texture = new Texture(Gdx.files.internal("All Icons.png"));
@@ -73,7 +73,7 @@ public final class GuiUtils {
     }
 
     //Board color
-    public enum TILE_COLOR {
+    public enum TileColorTheme {
         CLASSIC {
             @Override
             public Color DARK_TILE() {

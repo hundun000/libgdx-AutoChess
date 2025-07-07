@@ -16,6 +16,7 @@ import hundun.gdxgame.autochess.engine.board.Move;
 import hundun.gdxgame.autochess.engine.pieces.King;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.engine.pieces.Rook;
+import hundun.gdxgame.autochess.gui.GuiUtils;
 import hundun.gdxgame.autochess.gui.board.BulletActor;
 import hundun.gdxgame.autochess.gui.board.ChessActor;
 import hundun.gdxgame.autochess.gui.board.TileLayerTable;
@@ -159,6 +160,7 @@ public final class GameScreen extends BaseAutoChessScreen {
                 this.chessBoard = builder.build();
 
                 this.getChessLayerTable().rebuildGameBoardTable(this, this.getChessBoard(), this.getTileLayerTable());
+                this.getChessLayerTable().getChessActorMap().values().forEach(it -> it.startAnimation());
 
                 step = AutoStep.WAIT_ATTACK;
                 gameAutoBattleControlPanel.getButton().setText("Attack");
@@ -174,16 +176,24 @@ public final class GameScreen extends BaseAutoChessScreen {
                     BulletActor bulletActor = new BulletActor();
                     ChessActor attackFrom = chessLayerTable.getChessActorMap().get(it.getMovedPiece().getPiecePosition());
                     ChessActor attackTo = chessLayerTable.getChessActorMap().get(it.getAttackedPiece().getPiecePosition());
-                    bulletActor.setPosition(attackFrom.getX(), attackFrom.getY());
-                    bulletActor.setTargetX(attackTo.getX());
-                    bulletActor.setTargetY(attackTo.getY());
+                    bulletActor.setPosBaseCenter(attackFrom.getCenterX(), attackFrom.getCenterY());
+                    bulletActor.setTargetCenterX(attackTo.getCenterX());
+                    bulletActor.setTargetCenterY(attackTo.getCenterY());
                     chessLayerTable.addActor(bulletActor);
                     autoWaitingBullet.add(bulletActor);
+
+                    attackTo.getTileActor().setColor(GuiUtils.HUMAN_CURRENT_TILE);
                 });
 
                 Gdx.app.log(this.getClass().getSimpleName(), "autoWaitingPieces size: " + autoWaitingBullet.size());
                 step = AutoStep.WAIT_BULLET;
                 gameAutoBattleControlPanel.getButton().setText("Skip bullet");
+            }
+            break;
+            case WAIT_BULLET:
+            {
+                this.autoWaitingBullet.stream().forEach(it -> it.setPosBaseCenter(it.getTargetCenterX(), it.getTargetCenterY()));
+                this.autoWaitingBullet.clear();
             }
             break;
         }
@@ -231,7 +241,6 @@ public final class GameScreen extends BaseAutoChessScreen {
     }
 
 
-    float bulletSecondSpeed = 50;
 
     @Override
     protected void beforeUiStageAct(float delta) {
@@ -242,10 +251,8 @@ public final class GameScreen extends BaseAutoChessScreen {
         if (!this.autoWaitingBullet.isEmpty()) {
             List<BulletActor> removeBullet = new ArrayList<>();
             this.autoWaitingBullet.stream().forEach(it -> {
-                Pair<Float, Float> move = calculateDisplacement(it.getX(), it.getY(), it.getTargetX(), it.getTargetY(), bulletSecondSpeed, delta);
-                if (move != null) {
-                    it.setPosition(it.getX() + move.x, it.getY() + move.y);
-                } else {
+                boolean done = it.moveStep(delta);
+                if (done) {
                     removeBullet.add(it);
                     chessLayerTable.removeActor(it);
                 }
@@ -259,52 +266,6 @@ public final class GameScreen extends BaseAutoChessScreen {
 
     }
 
-    /**
-     * 计算 delta 时间内的位移分量。
-     *
-     * @param startX  起始点 X 坐标
-     * @param startY  起始点 Y 坐标
-     * @param endX    终点 X 坐标
-     * @param endY    终点 Y 坐标
-     * @param speed   速度大小 (单位：单位距离/秒)
-     * @param deltaTime  时间间隔 (单位：秒)
-     * @return 一个 Vector2 对象，包含 X 和 Y 方向的位移分量。  返回 null 如果起点和终点重合。
-     */
-    public static Pair<Float, Float> calculateDisplacement(float startX, float startY, float endX, float endY, float speed, float deltaTime) {
-        // 计算方向向量
-        float dx = endX - startX;
-        float dy = endY - startY;
-
-        // 如果起点和终点重合，则没有位移
-        if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01) {
-            return null; // 或者返回一个 (0, 0) 的 Vector2, 根据你的需求
-        }
-
-        // 计算方向向量的长度
-        float distanceToTarget  = (float) Math.sqrt(dx * dx + dy * dy);
-
-        // 归一化方向向量  (使其长度为 1)
-        float directionX = dx / distanceToTarget ;
-        float directionY = dy / distanceToTarget ;
-
-        // 计算理想位移
-        float idealDisplacementX = directionX * speed * deltaTime;
-        float idealDisplacementY = directionY * speed * deltaTime;
-
-        // 计算理想位移的大小
-        float idealDisplacementMagnitude = (float) Math.sqrt(idealDisplacementX * idealDisplacementX + idealDisplacementY * idealDisplacementY);
-
-        // 如果理想位移超过了剩余距离，则限制位移
-        if (idealDisplacementMagnitude > distanceToTarget) {
-            // 计算缩放因子，使得位移刚好到达目标点
-            float scaleFactor = distanceToTarget / idealDisplacementMagnitude;
-            idealDisplacementX *= scaleFactor;
-            idealDisplacementY *= scaleFactor;
-        }
-
-        // 返回位移分量
-        return new Pair<>(idealDisplacementX, idealDisplacementY);
-    }
 
 
 

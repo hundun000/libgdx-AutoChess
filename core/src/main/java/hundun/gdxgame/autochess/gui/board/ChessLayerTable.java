@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import hundun.gdxgame.autochess.engine.League;
 import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.BoardUtils;
@@ -163,12 +164,12 @@ public final class ChessLayerTable extends Table {
                 tileLayerTable.row();
             }
             Piece piece = chessBoard.getTile(i).getPiece();
-            TextureRegion textureRegion = piece != null ? GuiUtils.GET_PIECE_TEXTURE_REGION(piece) : GuiUtils.TRANSPARENT_TEXTURE_REGION;
-            ChessActor chessActor = new ChessActor(gameScreen, textureRegion, i, piece);
+            ChessActor chessActor = new ChessActor(gameScreen, i, piece);
             chessActorMap.put(i, chessActor);
-            this.add(chessActor).size(GuiUtils.TILE_SIZE);
+            this.addActor(chessActor);
             final TileActor tile = new TileActor(i);
-            tile.repaint(this, chessBoard, gameScreen.getTileLayerTable());
+            //tile.repaint(this, chessBoard, gameScreen.getTileLayerTable());
+            chessActor.setTileActor(tile);
             tileLayerTable.add(tile).size(GuiUtils.TILE_SIZE);
         });
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import hundun.gdxgame.autochess.engine.board.Board;
 import hundun.gdxgame.autochess.engine.board.BoardUtils;
 import hundun.gdxgame.autochess.gui.GuiUtils;
+import hundun.gdxgame.autochess.gui.GuiUtils.TileColorTheme;
 
 public final class TileActor extends Image {
 
@@ -14,13 +15,14 @@ public final class TileActor extends Image {
         super(GuiUtils.GET_TILE_TEXTURE_REGION("white"));
         this.tileID = tileID;
         this.setVisible(true);
+        this.setColor(this.getTileColor(TileColorTheme.CLASSIC));
     }
 
-    private Color getTileColor(final GuiUtils.TILE_COLOR TILE_COLOR) {
+    private Color getTileColor(final TileColorTheme TileColorTheme) {
         if (BoardUtils.FIRST_ROW.get(this.tileID) || BoardUtils.THIRD_ROW.get(this.tileID) || BoardUtils.FIFTH_ROW.get(this.tileID) || BoardUtils.SEVENTH_ROW.get(this.tileID)) {
-            return this.tileID % 2 == 0 ? TILE_COLOR.LIGHT_TILE() : TILE_COLOR.DARK_TILE();
+            return this.tileID % 2 == 0 ? TileColorTheme.LIGHT_TILE() : TileColorTheme.DARK_TILE();
         }
-        return this.tileID % 2 != 0 ? TILE_COLOR.LIGHT_TILE() : TILE_COLOR.DARK_TILE();
+        return this.tileID % 2 != 0 ? TileColorTheme.LIGHT_TILE() : TileColorTheme.DARK_TILE();
     }
 
     private Color getHumanMoveColor(final ChessLayerTable chessLayerTable, final TileLayerTable tileLayerTable) {
@@ -29,7 +31,7 @@ public final class TileActor extends Image {
         } else if (this.tileID == chessLayerTable.getHumanMove().getDestinationCoordinate()) {
             return GuiUtils.HUMAN_CURRENT_TILE;
         }
-        return this.getTileColor(tileLayerTable.getTileColor());
+        return this.getTileColor(tileLayerTable.getTileColorTheme());
     }
 
     private Color getAIMoveColor(final ChessLayerTable chessLayerTable, final TileLayerTable tileLayerTable) {
@@ -38,7 +40,7 @@ public final class TileActor extends Image {
         } else if (this.tileID == chessLayerTable.getAiMove().getDestinationCoordinate()) {
             return GuiUtils.AI_CURRENT_TILE;
         }
-        return this.getTileColor(tileLayerTable.getTileColor());
+        return this.getTileColor(tileLayerTable.getTileColorTheme());
     }
 
     public void repaint(final ChessLayerTable chessLayerTable, final Board chessBoard, final TileLayerTable tileLayerTable) {
@@ -49,7 +51,7 @@ public final class TileActor extends Image {
         } else if (chessLayerTable.getAiMove() != null && chessLayerTable.isHighlightPreviousMove()) {
             this.setColor(this.getAIMoveColor(chessLayerTable, tileLayerTable));
         } else {
-            this.setColor(this.getTileColor(tileLayerTable.getTileColor()));
+            this.setColor(this.getTileColor(tileLayerTable.getTileColorTheme()));
         }
     }
 }

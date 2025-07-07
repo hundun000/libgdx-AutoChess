@@ -8,43 +8,44 @@ import hundun.gdxgame.autochess.engine.board.BoardUtils;
 import hundun.gdxgame.autochess.engine.board.Move;
 import hundun.gdxgame.autochess.engine.pieces.Piece;
 import hundun.gdxgame.autochess.gui.GuiUtils;
+import hundun.gdxgame.autochess.gui.GuiUtils.TileColorTheme;
 import lombok.Setter;
 
 @Setter
 public final class TileLayerTable extends Table {
 
-    private GuiUtils.TILE_COLOR tileColor;
+    private TileColorTheme tileColorTheme;
 
     public TileLayerTable() {
         this.setFillParent(true);
-        this.tileColor = GuiUtils.TILE_COLOR.CLASSIC;
+        this.tileColorTheme = TileColorTheme.CLASSIC;
         for (int i = 0; i < BoardUtils.NUM_TILES; i += 1) {
             if (i % 8 == 0) {
                 this.row();
             }
             final TileActor tileActor = new TileActor(i);
-            tileActor.setColor(getTileColor(this.tileColor, i));
+            tileActor.setColor(getTileColorTheme(this.tileColorTheme, i));
             this.add(tileActor).size(GuiUtils.TILE_SIZE);
         }
         this.validate();
     }
 
-    private static Color getTileColor(final GuiUtils.TILE_COLOR TILE_COLOR, final int i) {
+    private static Color getTileColorTheme(final TileColorTheme TileColorTheme, final int i) {
         if (BoardUtils.FIRST_ROW.get(i) || BoardUtils.THIRD_ROW.get(i) || BoardUtils.FIFTH_ROW.get(i) || BoardUtils.SEVENTH_ROW.get(i)) {
-            return i % 2 == 0 ? TILE_COLOR.LIGHT_TILE() : TILE_COLOR.DARK_TILE();
+            return i % 2 == 0 ? TileColorTheme.LIGHT_TILE() : TileColorTheme.DARK_TILE();
         }
-        return i % 2 != 0 ? TILE_COLOR.LIGHT_TILE() : TILE_COLOR.DARK_TILE();
+        return i % 2 != 0 ? TileColorTheme.LIGHT_TILE() : TileColorTheme.DARK_TILE();
     }
 
-    private static Color getHighlightTileColor(final GuiUtils.TILE_COLOR TILE_COLOR, final int i) {
+    private static Color getHighlightTileColor(final TileColorTheme TileColorTheme, final int i) {
         if (BoardUtils.FIRST_ROW.get(i) || BoardUtils.THIRD_ROW.get(i) || BoardUtils.FIFTH_ROW.get(i) || BoardUtils.SEVENTH_ROW.get(i)) {
-            return i % 2 == 0 ? TILE_COLOR.HIGHLIGHT_LEGAL_MOVE_LIGHT_TILE() : TILE_COLOR.HIGHLIGHT_LEGAL_MOVE_DARK_TILE();
+            return i % 2 == 0 ? TileColorTheme.HIGHLIGHT_LEGAL_MOVE_LIGHT_TILE() : TileColorTheme.HIGHLIGHT_LEGAL_MOVE_DARK_TILE();
         }
-        return i % 2 != 0 ? TILE_COLOR.HIGHLIGHT_LEGAL_MOVE_LIGHT_TILE() : TILE_COLOR.HIGHLIGHT_LEGAL_MOVE_DARK_TILE();
+        return i % 2 != 0 ? TileColorTheme.HIGHLIGHT_LEGAL_MOVE_LIGHT_TILE() : TileColorTheme.HIGHLIGHT_LEGAL_MOVE_DARK_TILE();
     }
 
-    public GuiUtils.TILE_COLOR getTileColor() {
-        return this.tileColor;
+    public TileColorTheme getTileColorTheme() {
+        return this.tileColorTheme;
     }
 
     public void highlightLegalMove(final ChessLayerTable chessLayerTable, final Board chessBoard) {
@@ -55,7 +56,7 @@ public final class TileLayerTable extends Table {
             if (move.isAttack() || move.isPromotionMove() && ((Move.PawnPromotion) move).getDecoratedMove().isAttack()) {
                 this.getChildren().get(tileID).setColor(new Color(204 / 255f, 0 / 255f, 0 / 255f, 1));
             } else {
-                this.getChildren().get(tileID).setColor(getHighlightTileColor(getTileColor(), tileID));
+                this.getChildren().get(tileID).setColor(getHighlightTileColor(getTileColorTheme(), tileID));
             }
         }
     }
